@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Consts.h"
+#include "VecUtils.h"
 
 Game::Game()
 	: window_(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_NAME, sf::Style::Close),
@@ -53,10 +54,8 @@ void Game::Update()
 	// Create ground shape
 	sf::RectangleShape groundRectangleShape;
 	groundRectangleShape.setSize(sf::Vector2f(2, 2));
-	b2Vec2 groundPos = groundBody->GetPosition();
-	b2Vec2 groundOrig = groundBody->GetWorldCenter();
-	groundRectangleShape.setOrigin(groundOrig.x, -groundOrig.y);
-	groundRectangleShape.setPosition(groundPos.x, -groundPos.y);
+	groundRectangleShape.setOrigin(Box2dVecToSfml(groundBody->GetPosition()));
+	groundRectangleShape.setPosition(Box2dVecToSfml(groundBody->GetWorldCenter()));
 	groundRectangleShape.setFillColor(sf::Color::Magenta);
 
 	sf::Clock clock;
@@ -72,8 +71,7 @@ void Game::Update()
 		}
 
 		world_.Step(PHYSICS_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-		b2Vec2 boxPos = ballBody->GetPosition();
-		ballCircleShape.setPosition(boxPos.x, -boxPos.y);
+		ballCircleShape.setPosition(Box2dVecToSfml(ballBody->GetPosition()));
 
 		// Rendering
 		window_.clear(sf::Color::Black);
