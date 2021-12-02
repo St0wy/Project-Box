@@ -1,5 +1,8 @@
 #include "Game.h"
 #include "Consts.h"
+#include "Entity.h"
+#include "Player.h"
+#include "PlayerContactListener.h"
 #include "VecUtils.h"
 
 Game::Game()
@@ -7,7 +10,6 @@ Game::Game()
 	view_(sf::Vector2f(0, -2), sf::Vector2f(CAM_WIDTH, CAM_HEIGHT)),
 	gravity_(0.0f, GRAVITY_STRENGHT),
 	world_(gravity_)
-
 {
 	window_.setVerticalSyncEnabled(true);
 	window_.setFramerateLimit(FRAMERATE);
@@ -30,34 +32,27 @@ void Game::Update()
 	groundBox.SetAsBox(50.0f, 10.0f);
 	groundBody->CreateFixture(&groundBox, 0.0f);
 
-	// Create ball
-	b2BodyDef ballBodyDef;
-	ballBodyDef.type = b2_dynamicBody;
-	ballBodyDef.position.Set(0.0f, 4.0f);
-	b2Body* ballBody = world_.CreateBody(&ballBodyDef);
-	b2PolygonShape ballDynamicBox;
-	ballDynamicBox.SetAsBox(1.0f, 1.0f);
-
-	// Create ball fixture
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &ballDynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
-
-	ballBody->CreateFixture(&fixtureDef);
-
-	// Create ball sfml
-	sf::CircleShape ballCircleShape;
-	ballCircleShape.setFillColor(sf::Color::Red);
-	ballCircleShape.setRadius(0.5f);
-
 	// Create ground shape
 	sf::RectangleShape groundRectangleShape;
-	groundRectangleShape.setSize(sf::Vector2f(2, 2));
-	groundRectangleShape.setOrigin(Box2dVecToSfml(groundBody->GetPosition()));
+	auto size = sf::Vector2f(100, 20);
+	groundRectangleShape.setSize(size);
+	groundRectangleShape.setOrigin(size / 2.0f);
 	groundRectangleShape.setPosition(Box2dVecToSfml(groundBody->GetWorldCenter()));
-	groundRectangleShape.setFillColor(sf::Color::Magenta);
+	groundRectangleShape.setFillColor(sf::Color::Green);
 
+	// Create hero
+	sf::Texture playerTexture;
+	playerTexture.loadFromFile("./data/hero.png");
+	
+	Player player(world_);
+	float factor = 2.0f / 16.0f;
+	player.setScale(factor, factor);
+	player.SetTexture(playerTexture);
+
+	PlayerContactListener playerContactListener;
+	world_.SetContactListener(&playerContactListener);
+
+	// Main loop
 	sf::Clock clock;
 	while (window_.isOpen())
 	{
@@ -71,13 +66,13 @@ void Game::Update()
 		}
 
 		world_.Step(PHYSICS_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-		ballCircleShape.setPosition(Box2dVecToSfml(ballBody->GetPosition()));
+		player.Update(deltaTime);
 
 		// Rendering
-		window_.clear(sf::Color::Black);
+		window_.clear(sf::Color::Blue);
 
 		// Render all the entities
-		window_.draw(ballCircleShape);
+		window_.draw(player);
 		window_.draw(groundRectangleShape);
 
 		window_.display();
