@@ -55,7 +55,7 @@ void Player::Update(const sf::Time deltaTime)
 	const b2Vec2& vel = GetBody()->GetLinearVelocity();
 
 	// Compute move direction
-	if ((isInputingLeft || isInputingRight) && (IsGrounded() || std::abs(vel.x) > 0.01f))
+	if ((isInputingLeft || isInputingRight) && (IsGrounded()/* || std::abs(vel.x) > 0.01f*/))
 	{
 		moveDirection_ = isInputingLeft ? -1 : 1;
 	}
