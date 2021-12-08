@@ -23,11 +23,12 @@ std::optional<sf::Texture*> RessourceManager::GetTexture(const std::string& path
 	{
 		return texture->second.get();
 	}
-	if (std::filesystem::exists(path))
+	auto newTexture = std::make_unique<sf::Texture>();
+	if (newTexture->loadFromFile(path))
 	{
-		textures_[path] = std::make_unique<sf::Texture>();
-		textures_[path]->loadFromFile(path);
-		return textures_[path].get();
+		const auto copy = newTexture.get();
+		textures_[path] = std::move(newTexture);
+		return copy;
 	}
 	return {};
 }

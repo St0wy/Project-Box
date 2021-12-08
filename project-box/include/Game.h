@@ -9,7 +9,7 @@ private:
 	sf::RenderWindow window_;
 	b2Vec2 gravity_;
 	b2World world_;
-	bool drawColliders_ = true;
+	bool drawColliders_ = false;
 public:
 	Game();
 
