@@ -3,11 +3,13 @@
 #include "Entity.h"
 #include "Player.h"
 #include "PlayerContactListener.h"
+#include "Ground.h"
+#include "RessourceManager.h"
+#include "Block.h"
 #include "VecUtils.h"
 
 Game::Game()
 	: window_(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_NAME, sf::Style::Close),
-	view_(sf::Vector2f(0, -2), sf::Vector2f(CAM_WIDTH, CAM_HEIGHT)),
 	gravity_(0.0f, GRAVITY_STRENGHT),
 	world_(gravity_)
 {
@@ -15,7 +17,7 @@ Game::Game()
 	window_.setFramerateLimit(FRAMERATE);
 
 	// Create view (camera) of the scene and set it to the window
-	window_.setView(view_);
+	window_.setView(sf::View(sf::Vector2f(0, -2), sf::Vector2f(CAM_WIDTH, CAM_HEIGHT)));
 
 	// Create box2d world
 	const b2Vec2 gravity(0.0f, GRAVITY_STRENGHT);
@@ -24,30 +26,24 @@ Game::Game()
 
 void Game::Update()
 {
+	constexpr float groundHalfWidth = 50.0f;
+	constexpr float groundHalfHeight = 10.0f;
+	constexpr float factor = 2.0f / 16.0f;
+
 	// Create ground
-	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(0.0f, -10.0f);
-	b2Body* groundBody = world_.CreateBody(&groundBodyDef);
-	b2PolygonShape groundBox;
-	groundBox.SetAsBox(50.0f, 10.0f);
-	groundBody->CreateFixture(&groundBox, 0.0f);
+	Ground ground(world_, groundHalfWidth, groundHalfHeight, b2Vec2(0.0f, -15.0f));
 
-	// Create ground shape
-	sf::RectangleShape groundRectangleShape;
-	auto size = sf::Vector2f(100, 20);
-	groundRectangleShape.setSize(size);
-	groundRectangleShape.setOrigin(size / 2.0f);
-	groundRectangleShape.setPosition(Box2dVecToSfml(groundBody->GetWorldCenter()));
-	groundRectangleShape.setFillColor(sf::Color::Green);
+	// Create block
+	Block block(world_, b2Vec2(0.0f, 0.0f));
+	block.setScale(factor, factor);
 
-	// Create hero
-	sf::Texture playerTexture;
-	playerTexture.loadFromFile("./data/hero.png");
-	
+	// Create player
+	auto playerTextureResult = RessourceManager::GetInstance()->GetTexture("./data/hero.png");
+	sf::Texture* playerTexture = playerTextureResult.value();
+
 	Player player(world_);
-	float factor = 2.0f / 16.0f;
 	player.setScale(factor, factor);
-	player.SetTexture(playerTexture);
+	player.SetTexture(*playerTexture);
 
 	PlayerContactListener playerContactListener;
 	world_.SetContactListener(&playerContactListener);
@@ -67,13 +63,47 @@ void Game::Update()
 
 		world_.Step(PHYSICS_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 		player.Update(deltaTime);
+		sf::View view = window_.getView();
+		sf::Vector2f viewPos = view.getCenter();
+		view.setCenter(player.getPosition().x, viewPos.y);
+		window_.setView(view);
 
 		// Rendering
 		window_.clear(sf::Color::Blue);
 
 		// Render all the entities
 		window_.draw(player);
-		window_.draw(groundRectangleShape);
+		window_.draw(ground);
+		window_.draw(block);
+
+		if (drawColliders_)
+		{
+			// Draw player
+			auto body = player.GetBody();
+			b2Fixture* fixture = player.GetBody()->GetFixtureList();
+			while (fixture != nullptr)
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					b2Shape* shape = fixture->GetShape();
+					auto polygonShape = dynamic_cast<b2PolygonShape*>(shape);
+					sf::ConvexShape convex;
+					convex.setPointCount(4);
+					for (int j = 0; j < 4; j++)
+					{
+						b2Vec2 point = polygonShape->m_vertices[j];
+						auto worldPoint = player.GetBody()->GetWorldPoint(point);
+						convex.setPoint(j, Box2dVecToSfml(worldPoint));
+					}
+					convex.setFillColor(sf::Color::Transparent);
+					convex.setOutlineColor(sf::Color::Red);
+					convex.setOutlineThickness(0.1f);
+					window_.draw(convex);
+				}
+				fixture = fixture->GetNext();
+			}
+
+		}
 
 		window_.display();
 	}

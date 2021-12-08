@@ -10,7 +10,8 @@ private:
 	int32 footContactsCounter_;
 public:
 	static constexpr float MAX_SPEED = 5.4f;
-	static constexpr float JUMP_HEIGHT = 6.5f;
+	static constexpr float JUMP_HEIGHT = 8.5f;
+	static constexpr float JUMP_BOOST = 1.2f;
 
 	explicit Player(b2World& world);
 	Player(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& collisionShape);

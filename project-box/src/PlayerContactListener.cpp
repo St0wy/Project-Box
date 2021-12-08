@@ -1,6 +1,6 @@
 #include "PlayerContactListener.h"
 #include "Player.h"
-#include "SensorType.h"
+#include "FixtureType.h"
 
 void PlayerContactListener::BeginContact(b2Contact* contact)
 {
@@ -40,5 +40,7 @@ Player* PlayerContactListener::GetPlayerPointer(b2Fixture* fixture)
 
 bool PlayerContactListener::IsFootSensor(b2Fixture* fixture)
 {
-	return fixture->GetUserData().pointer == static_cast<uintptr_t>(SensorType::PlayerFootSensor);
+	const auto pointer = fixture->GetUserData().pointer;
+	constexpr auto sensorPtr = static_cast<uintptr_t>(FixtureType::PlayerFootSensor);
+	return pointer == sensorPtr;
 }

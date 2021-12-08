@@ -6,7 +6,7 @@
 class Entity
 	: public sf::Sprite
 {
-private:
+protected:
 	b2Body* body_;
 public:
 	Entity();

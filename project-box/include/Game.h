@@ -7,9 +7,9 @@ class Game
 {
 private:
 	sf::RenderWindow window_;
-	sf::View view_;
 	b2Vec2 gravity_;
 	b2World world_;
+	bool drawColliders_ = true;
 public:
 	Game();
 

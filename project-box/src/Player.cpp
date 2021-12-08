@@ -1,7 +1,7 @@
 #include "Player.h"
 
 #include "VecUtils.h"
-#include "SensorType.h"
+#include "FixtureType.h"
 
 Player::Player(b2World& world)
 	:Entity(), isFacingRight_(true), moveDirection_(0), footContactsCounter_(0)
@@ -10,6 +10,8 @@ Player::Player(b2World& world)
 	entityBodyDef.type = b2_dynamicBody;
 	entityBodyDef.position.Set(0.0f, 10.0f);
 	entityBodyDef.userData.pointer = reinterpret_cast<std::uintptr_t>(this);
+	entityBodyDef.gravityScale = 1.9f;
+	entityBodyDef.fixedRotation = true;
 
 	b2PolygonShape collisionShape;
 	collisionShape.SetAsBox(1.0f, 1.0f);
@@ -23,13 +25,14 @@ Player::Player(b2World& world)
 	GetBody()->CreateFixture(&fixtureDef);
 
 	b2PolygonShape footPolygonShape;
-	footPolygonShape.SetAsBox(0.3f, 0.3f, b2Vec2(0, -2), 0);
+	footPolygonShape.SetAsBox(0.3f, 0.3f, b2Vec2(0, -1), 0);
 
 	b2FixtureDef footFixtureDef;
 	footFixtureDef.isSensor = true;
-	footFixtureDef.userData.pointer = static_cast<uintptr_t>(SensorType::PlayerFootSensor);
+	constexpr auto sensorPtr = static_cast<uintptr_t>(FixtureType::PlayerFootSensor);
+	footFixtureDef.userData.pointer = sensorPtr;
 	footFixtureDef.shape = &footPolygonShape;
-	GetBody()->CreateFixture(&fixtureDef);
+	GetBody()->CreateFixture(&footFixtureDef);
 }
 
 Player::Player(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& collisionShape)
@@ -39,7 +42,7 @@ Player::Player(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& c
 
 bool Player::IsGrounded() const
 {
-	return footContactsCounter_ > 1;
+	return footContactsCounter_ > 0;
 }
 
 void Player::Update(const sf::Time deltaTime)
@@ -52,7 +55,7 @@ void Player::Update(const sf::Time deltaTime)
 		sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
 
-	const b2Vec2& vel = GetBody()->GetLinearVelocity();
+	b2Vec2 vel = GetBody()->GetLinearVelocity();
 
 	// Compute move direction
 	if ((isInputingLeft || isInputingRight) && (IsGrounded()/* || std::abs(vel.x) > 0.01f*/))
@@ -83,14 +86,19 @@ void Player::Update(const sf::Time deltaTime)
 		}
 	}
 
-	// Apply move
-	GetBody()->SetLinearVelocity(b2Vec2(static_cast<float>(moveDirection_) * MAX_SPEED, vel.y));
+	// Movement
+	vel = b2Vec2(static_cast<float>(moveDirection_) * MAX_SPEED, vel.y);
+
 
 	// Jumping
 	if (isInputingJump && IsGrounded())
 	{
-		GetBody()->SetLinearVelocity(b2Vec2(vel.x, JUMP_HEIGHT));
+		vel.x *= JUMP_BOOST;
+		vel.y = JUMP_HEIGHT;
 	}
+
+	// Apply move to body
+	GetBody()->SetLinearVelocity(vel);
 
 	Entity::Update(deltaTime);
 }
