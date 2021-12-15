@@ -14,13 +14,15 @@ private:
 	float gravity_;
 	float jumpVelocity_;
 	b2Vec2 moveVel_;
+	float velocityXSmoothing_;
 public:
 	static constexpr float MOVE_SPEED = 10.0;
 	static constexpr float JUMP_HEIGHT = 6.5f;
 	static constexpr float TIME_TO_JUMP_APEX = 0.4f;
+	static constexpr float ACCELERATION_TIME_AIRBORNE = 0.2f;
+	static constexpr float ACCELERATION_TIME_GROUNDED = 0.1f;
 
 	explicit Player(b2World& world);
-	Player(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& collisionShape);
 
 	PlayerState GetState() const;
 

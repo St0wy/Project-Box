@@ -6,6 +6,7 @@
 #include "Ground.h"
 #include "RessourceManager.h"
 #include "Block.h"
+#include "FinishLine.h"
 #include "VecUtils.h"
 
 Game::Game()
@@ -35,13 +36,12 @@ void Game::Update()
 	// Create block
 	entities_.emplace_back(std::make_unique<Block>(world_, b2Vec2(5.0f, 0.0f)));
 
-	// Create player
-	auto playerTextureResult = RessourceManager::GetInstance()->GetTexture(SPRITESHEET_PATH);
-	sf::Texture* playerTexture = playerTextureResult.value();
+	// Create finish line
+	entities_.emplace_back(std::make_unique<FinishLine>(world_, b2Vec2(15.0f, 0.0f)));
 
+	// Create player
 	entities_.emplace_back(std::make_unique<Player>(world_));
-	auto player = dynamic_cast<Player*>(entities_[1].get());
-	player->SetTexture(*playerTexture, sf::IntRect(0, 80, 16, 16));
+	auto player = dynamic_cast<Player*>(entities_[2].get());
 
 	PlayerContactListener playerContactListener;
 	world_.SetContactListener(&playerContactListener);
@@ -76,7 +76,7 @@ void Game::Update()
 		window_.setView(view);
 
 		// Rendering
-		window_.clear(sf::Color::Black);
+		window_.clear(sf::Color::Blue);
 
 		// Render all the entities
 		for (const auto& entity : entities_)
@@ -87,32 +87,40 @@ void Game::Update()
 
 		if (drawColliders_)
 		{
-			// Draw player
-			b2Fixture* fixture = player->GetBody()->GetFixtureList();
-			while (fixture != nullptr)
-			{
-				for (int i = 0; i < 2; i++)
-				{
-					b2Shape* shape = fixture->GetShape();
-					auto polygonShape = dynamic_cast<b2PolygonShape*>(shape);
-					sf::ConvexShape convex;
-					convex.setPointCount(4);
-					for (int j = 0; j < 4; j++)
-					{
-						b2Vec2 point = polygonShape->m_vertices[j];
-						auto worldPoint = player->GetBody()->GetWorldPoint(point);
-						convex.setPoint(j, Box2dVecToSfml(worldPoint));
-					}
-					convex.setFillColor(sf::Color::Transparent);
-					convex.setOutlineColor(sf::Color::Red);
-					convex.setOutlineThickness(0.1f);
-					window_.draw(convex);
-				}
-				fixture = fixture->GetNext();
-			}
-
+			DrawColliders();
 		}
 
 		window_.display();
+	}
+}
+
+void Game::DrawColliders()
+{
+	for (const auto& entity : entities_)
+	{
+		DrawBody(entity->GetBody());
+	}
+}
+
+void Game::DrawBody(b2Body* body)
+{
+	b2Fixture* fixture = body->GetFixtureList();
+	while (fixture != nullptr)
+	{
+		b2Shape* shape = fixture->GetShape();
+		const auto polygonShape = dynamic_cast<b2PolygonShape*>(shape);
+		sf::ConvexShape convex;
+		convex.setPointCount(4);
+		for (int j = 0; j < 4; j++)
+		{
+			b2Vec2 point = polygonShape->m_vertices[j];
+			auto worldPoint = body->GetWorldPoint(point);
+			convex.setPoint(j, Box2dVecToSfml(worldPoint));
+		}
+		convex.setFillColor(sf::Color::Transparent);
+		convex.setOutlineColor(sf::Color::Red);
+		convex.setOutlineThickness(0.1f);
+		window_.draw(convex);
+		fixture = fixture->GetNext();
 	}
 }

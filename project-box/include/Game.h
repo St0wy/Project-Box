@@ -17,4 +17,7 @@ public:
 	Game();
 
 	void Update();
+
+	void DrawColliders();
+	void DrawBody(b2Body* body);
 };

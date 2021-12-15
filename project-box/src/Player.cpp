@@ -3,18 +3,21 @@
 #include "Consts.h"
 #include "VecUtils.h"
 #include "FixtureType.h"
+#include "RessourceManager.h"
 
 Player::Player(b2World& world)
 	:Entity(),
 	footContactsCounter_(0),
 	state_(PlayerState::Idle),
 	idle_(GetSprite(), 0.6f),
-	walk_(GetSprite(), 0.6f)
+	walk_(GetSprite(), 0.6f),
+	velocityXSmoothing_(0)
 {
 	b2BodyDef entityBodyDef;
 	entityBodyDef.type = b2_dynamicBody;
 	entityBodyDef.position.Set(0.0f, 10.0f);
 	entityBodyDef.userData.pointer = reinterpret_cast<std::uintptr_t>(this);
+	// Removed gravity because i use one that I compute from JUMP_HEIGHT and TIME_TO_JUMP_APEX
 	entityBodyDef.gravityScale = 0.0f;
 	entityBodyDef.fixedRotation = true;
 
@@ -30,7 +33,7 @@ Player::Player(b2World& world)
 	GetBody()->CreateFixture(&fixtureDef);
 
 	b2PolygonShape footPolygonShape;
-	footPolygonShape.SetAsBox(0.3f, 0.3f, b2Vec2(0, -1), 0);
+	footPolygonShape.SetAsBox(0.99f, 0.1f, b2Vec2(0, -1), 0);
 
 	b2FixtureDef footFixtureDef;
 	footFixtureDef.isSensor = true;
@@ -48,27 +51,9 @@ Player::Player(b2World& world)
 			sf::IntRect(sf::Vector2i(x, 80 + static_cast<int>(SPRITE_SIZE.y)), sf::Vector2i(SPRITE_SIZE)));
 	}
 
-	gravity_ = -(2 * JUMP_HEIGHT) / (TIME_TO_JUMP_APEX * TIME_TO_JUMP_APEX);
-	jumpVelocity_ = std::abs(gravity_) * TIME_TO_JUMP_APEX;
-}
-
-Player::Player(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& collisionShape)
-	: Entity(world, bodyDef, collisionShape),
-	footContactsCounter_(0),
-	state_(PlayerState::Idle),
-	idle_(GetSprite(), 0.6f),
-	walk_(GetSprite(), 0.6f),
-	gravity_(0),
-	jumpVelocity_(0)
-{
-	for (int i = 0; i < 6; ++i)
-	{
-		const int x = i * static_cast<int>(SPRITE_SIZE.x);
-		idle_.AddFrame(1.0f,
-			sf::IntRect(sf::Vector2i(x, 80), sf::Vector2i(SPRITE_SIZE)));
-		walk_.AddFrame(1.0f,
-			sf::IntRect(sf::Vector2i(x, 80 + static_cast<int>(SPRITE_SIZE.y)), sf::Vector2i(SPRITE_SIZE)));
-	}
+	const auto playerTextureResult = RessourceManager::GetInstance()->GetTexture(SPRITESHEET_PATH);
+	const sf::Texture* playerTexture = playerTextureResult.value();
+	SetTexture(*playerTexture, sf::IntRect(0, 80, 16, 16));
 
 	gravity_ = -(2 * JUMP_HEIGHT) / (TIME_TO_JUMP_APEX * TIME_TO_JUMP_APEX);
 	jumpVelocity_ = std::abs(gravity_) * TIME_TO_JUMP_APEX;
@@ -106,7 +91,6 @@ b2Vec2 Player::ComputeMovementVec(const sf::Time deltaTime)
 	{
 		moveVel_.y = jumpVelocity_;
 	}
-
 	moveVel_.x = moveDirection * MOVE_SPEED;
 	moveVel_.y += gravity_ * deltaTime.asSeconds();
 
@@ -133,10 +117,11 @@ void Player::Update(const sf::Time deltaTime)
 	}
 
 	const sf::Vector2f scale = getScale();
-	if (vel.x >= 0)
+	if (vel.x > 0)
 	{
 		setScale(std::abs(scale.x), scale.y);
-	} else
+	}
+	else if (vel.x < 0)
 	{
 		setScale(-std::abs(scale.x), scale.y);
 	}
