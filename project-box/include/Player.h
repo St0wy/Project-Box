@@ -15,7 +15,7 @@ private:
 	FrameAnimation walk_;
 public:
 	static constexpr float MAX_SPEED = 5.4f;
-	static constexpr float JUMP_HEIGHT = 8.5f;
+	static constexpr float JUMP_HEIGHT = 17.0f;
 	static constexpr float JUMP_BOOST = 1.2f;
 
 	explicit Player(b2World& world);
