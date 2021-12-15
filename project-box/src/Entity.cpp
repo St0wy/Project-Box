@@ -1,8 +1,11 @@
 #include "Entity.h"
+
+#include "Consts.h"
 #include "VecUtils.h"
 
 Entity::Entity() : body_(nullptr)
 {
+	setScale(SCALE_FACTOR, SCALE_FACTOR);
 }
 
 Entity::Entity(b2World& world)
@@ -26,6 +29,7 @@ Entity::Entity(b2World& world)
 	fixtureDef.friction = 0.3f;
 
 	body_->CreateFixture(&fixtureDef);
+	setScale(SCALE_FACTOR, SCALE_FACTOR);
 }
 
 Entity::Entity(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& collisionShape)
@@ -38,6 +42,7 @@ Entity::Entity(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& c
 	fixtureDef.friction = 1.0f;
 
 	body_->CreateFixture(&fixtureDef);
+	setScale(SCALE_FACTOR, SCALE_FACTOR);
 }
 
 b2Body* Entity::GetBody() const

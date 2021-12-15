@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Entity.h"
+
 #include <box2d/box2d.h>
 #include <SFML/Graphics.hpp>
 
@@ -10,6 +12,7 @@ private:
 	b2Vec2 gravity_;
 	b2World world_;
 	bool drawColliders_ = false;
+	std::vector<std::unique_ptr<Entity>> entities_;
 public:
 	Game();
 

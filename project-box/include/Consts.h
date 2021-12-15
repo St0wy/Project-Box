@@ -11,6 +11,8 @@ constexpr float CAM_SCALE = 2.0f;
 constexpr float CAM_WIDTH = 16.0f * CAM_SCALE;
 constexpr float CAM_HEIGHT = 9.0f * CAM_SCALE;
 
+constexpr float SCALE_FACTOR = 2.0f / 16.0f;
+
 constexpr float GRAVITY_STRENGHT = -9.81f;
 
 constexpr float PHYSICS_STEP = 1.0f / static_cast<float>(FRAMERATE);

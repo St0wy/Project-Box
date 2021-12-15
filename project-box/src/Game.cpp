@@ -28,22 +28,20 @@ void Game::Update()
 {
 	constexpr float groundHalfWidth = 50.0f;
 	constexpr float groundHalfHeight = 10.0f;
-	constexpr float factor = 2.0f / 16.0f;
 
 	// Create ground
 	Ground ground(world_, groundHalfWidth, groundHalfHeight, b2Vec2(groundHalfWidth - 5, -15.0f));
 
 	// Create block
-	Block block(world_, b2Vec2(5.0f, 0.0f));
-	block.setScale(factor, factor);
+	entities_.emplace_back(std::make_unique<Block>(world_, b2Vec2(5.0f, 0.0f)));
 
 	// Create player
 	auto playerTextureResult = RessourceManager::GetInstance()->GetTexture(SPRITESHEET_PATH);
 	sf::Texture* playerTexture = playerTextureResult.value();
 
-	Player player(world_);
-	player.setScale(factor, factor);
-	player.SetTexture(*playerTexture, sf::IntRect(0, 80, 16, 16));
+	entities_.emplace_back(std::make_unique<Player>(world_));
+	auto player = dynamic_cast<Player*>(entities_[1].get());
+	player->SetTexture(*playerTexture, sf::IntRect(0, 80, 16, 16));
 
 	PlayerContactListener playerContactListener;
 	world_.SetContactListener(&playerContactListener);
@@ -61,27 +59,36 @@ void Game::Update()
 				window_.close();
 		}
 
+		// Step the physics
 		world_.Step(PHYSICS_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-		player.Update(deltaTime);
-		block.Update(deltaTime);
+
+		// Update the entites
+
+		for (const auto& entity : entities_)
+		{
+			entity->Update(deltaTime);
+		}
+
+		// Move the cam to follow the player
 		sf::View view = window_.getView();
 		sf::Vector2f viewPos = view.getCenter();
-		view.setCenter(player.getPosition().x, viewPos.y);
+		view.setCenter(player->getPosition().x, viewPos.y);
 		window_.setView(view);
 
 		// Rendering
-		window_.clear(sf::Color::Blue);
+		window_.clear(sf::Color::Black);
 
 		// Render all the entities
-		window_.draw(player);
+		for (const auto& entity : entities_)
+		{
+			window_.draw(*entity);
+		}
 		window_.draw(ground);
-		window_.draw(block);
 
 		if (drawColliders_)
 		{
 			// Draw player
-			auto body = player.GetBody();
-			b2Fixture* fixture = player.GetBody()->GetFixtureList();
+			b2Fixture* fixture = player->GetBody()->GetFixtureList();
 			while (fixture != nullptr)
 			{
 				for (int i = 0; i < 2; i++)
@@ -93,7 +100,7 @@ void Game::Update()
 					for (int j = 0; j < 4; j++)
 					{
 						b2Vec2 point = polygonShape->m_vertices[j];
-						auto worldPoint = player.GetBody()->GetWorldPoint(point);
+						auto worldPoint = player->GetBody()->GetWorldPoint(point);
 						convex.setPoint(j, Box2dVecToSfml(worldPoint));
 					}
 					convex.setFillColor(sf::Color::Transparent);
