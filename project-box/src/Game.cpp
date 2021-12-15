@@ -38,12 +38,12 @@ void Game::Update()
 	block.setScale(factor, factor);
 
 	// Create player
-	auto playerTextureResult = RessourceManager::GetInstance()->GetTexture("./data/hero.png");
+	auto playerTextureResult = RessourceManager::GetInstance()->GetTexture(SPRITESHEET_PATH);
 	sf::Texture* playerTexture = playerTextureResult.value();
 
 	Player player(world_);
 	player.setScale(factor, factor);
-	player.SetTexture(*playerTexture);
+	player.SetTexture(*playerTexture, sf::IntRect(0, 80, 16, 16));
 
 	PlayerContactListener playerContactListener;
 	world_.SetContactListener(&playerContactListener);

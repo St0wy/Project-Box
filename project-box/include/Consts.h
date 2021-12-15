@@ -17,3 +17,6 @@ constexpr float PHYSICS_STEP = 1.0f / static_cast<float>(FRAMERATE);
 
 constexpr int32 POSITION_ITERATIONS = 2;
 constexpr int32 VELOCITY_ITERATIONS = 6;
+
+constexpr char SPRITESHEET_PATH[] = "./data/sprites/char_spritesheet.png";
+const sf::Vector2u SPRITE_SIZE(16u, 16u);

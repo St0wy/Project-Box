@@ -55,17 +55,28 @@ void Entity::Update(const sf::Time deltaTime)
 	setPosition(Box2dVecToSfml(body_->GetPosition()));
 }
 
+void Entity::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	states.transform *= getTransform();
+	target.draw(sprite_, states);
+}
+
 void Entity::SetTexture(const sf::Texture& texture, const sf::IntRect& textureRect)
 {
-	setTextureRect(textureRect);
+	sprite_.setTextureRect(textureRect);
 	this->SetTexture(texture);
 }
 
 void Entity::SetTexture(const sf::Texture& texture)
 {
-	setTexture(texture);
+	sprite_.setTexture(texture);
+	const sf::IntRect textureRect = sprite_.getTextureRect();
+	const float xCenter = static_cast<float>(textureRect.width) / 2.0f;
+	const float yCenter = static_cast<float>(textureRect.height) / 2.0f;
+	sprite_.setOrigin(xCenter, yCenter);
+}
 
-	const sf::Vector2f size(texture.getSize());
-	const sf::Vector2f center = size / 2.0f;
-	setOrigin(center);
+sf::Sprite& Entity::GetSprite()
+{
+	return sprite_;
 }

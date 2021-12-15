@@ -1,10 +1,17 @@
 #include "Player.h"
 
+#include "Consts.h"
 #include "VecUtils.h"
 #include "FixtureType.h"
 
 Player::Player(b2World& world)
-	:Entity(), isFacingRight_(true), moveDirection_(0), footContactsCounter_(0)
+	:Entity(),
+	isFacingRight_(true),
+	moveDirection_(0),
+	footContactsCounter_(0),
+	state_(PlayerState::Idle),
+	idle_(GetSprite(), 0.6f),
+	walk_(GetSprite(), 0.6f)
 {
 	b2BodyDef entityBodyDef;
 	entityBodyDef.type = b2_dynamicBody;
@@ -33,19 +40,40 @@ Player::Player(b2World& world)
 	footFixtureDef.userData.pointer = sensorPtr;
 	footFixtureDef.shape = &footPolygonShape;
 	GetBody()->CreateFixture(&footFixtureDef);
+
+	for (int32 i = 0; i < 6; ++i)
+	{
+		idle_.AddFrame(1.0f,
+			sf::IntRect(sf::Vector2i(i * SPRITE_SIZE.y, 80), sf::Vector2i(SPRITE_SIZE)));
+		walk_.AddFrame(1.0f,
+			sf::IntRect(sf::Vector2i(i * SPRITE_SIZE.y, 80 + SPRITE_SIZE.x), sf::Vector2i(SPRITE_SIZE)));
+	}
 }
 
 Player::Player(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& collisionShape)
-	: Entity(world, bodyDef, collisionShape), isFacingRight_(true), moveDirection_(0), footContactsCounter_(0)
+	: Entity(world, bodyDef, collisionShape),
+	isFacingRight_(true),
+	moveDirection_(0),
+	footContactsCounter_(0),
+	state_(PlayerState::Idle),
+	idle_(GetSprite(), 0.6f),
+	walk_(GetSprite(), 0.6f)
 {
+	for (int i = 0; i < 6; ++i)
+	{
+		idle_.AddFrame(1.0f,
+			sf::IntRect(sf::Vector2i(i * SPRITE_SIZE.y, 80), sf::Vector2i(SPRITE_SIZE)));
+		walk_.AddFrame(1.0f,
+			sf::IntRect(sf::Vector2i(i * SPRITE_SIZE.y, 80 + SPRITE_SIZE.x), sf::Vector2i(SPRITE_SIZE)));
+	}
 }
 
-bool Player::IsGrounded() const
+PlayerState Player::GetState() const
 {
-	return footContactsCounter_ > 0;
+	return state_;
 }
 
-void Player::Update(const sf::Time deltaTime)
+b2Vec2 Player::ComputeMovementVec()
 {
 	const bool isInputingLeft = sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
@@ -97,8 +125,39 @@ void Player::Update(const sf::Time deltaTime)
 		vel.y = JUMP_HEIGHT;
 	}
 
+	return vel;
+}
+
+bool Player::IsGrounded() const
+{
+	return footContactsCounter_ > 0;
+}
+
+void Player::Update(const sf::Time deltaTime)
+{
+	const b2Vec2 vel = ComputeMovementVec();
+	
+
+	if (vel.x == 0 || !IsGrounded()) {  // NOLINT(clang-diagnostic-float-equal)
+		state_ = PlayerState::Idle;
+	}
+	else
+	{
+		state_ = PlayerState::Walk;
+	}
+
 	// Apply move to body
 	GetBody()->SetLinearVelocity(vel);
+
+	switch (GetState())
+	{
+	case PlayerState::Idle:
+		idle_.Update(deltaTime.asSeconds());
+		break;
+	case PlayerState::Walk:
+		walk_.Update(deltaTime.asSeconds());
+		break;
+	}
 
 	Entity::Update(deltaTime);
 }
