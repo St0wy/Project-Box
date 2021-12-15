@@ -19,4 +19,5 @@ constexpr int32 POSITION_ITERATIONS = 2;
 constexpr int32 VELOCITY_ITERATIONS = 6;
 
 constexpr char SPRITESHEET_PATH[] = "./data/sprites/char_spritesheet.png";
+constexpr char BLOCK_SPRITE_PATH[] = "./data/sprites/block.png";
 const sf::Vector2u SPRITE_SIZE(16u, 16u);

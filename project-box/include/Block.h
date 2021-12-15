@@ -4,5 +4,5 @@
 class Block final : public Entity
 {
 public:
-	explicit Block(b2World& world, b2Vec2 position);
+	Block(b2World& world, b2Vec2 position);
 };

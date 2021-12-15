@@ -41,12 +41,13 @@ Player::Player(b2World& world)
 	footFixtureDef.shape = &footPolygonShape;
 	GetBody()->CreateFixture(&footFixtureDef);
 
-	for (int32 i = 0; i < 6; ++i)
+	for (int i = 0; i < 6; ++i)
 	{
+		int x = i * static_cast<int>(SPRITE_SIZE.x);
 		idle_.AddFrame(1.0f,
-			sf::IntRect(sf::Vector2i(i * SPRITE_SIZE.y, 80), sf::Vector2i(SPRITE_SIZE)));
+			sf::IntRect(sf::Vector2i(x, 80), sf::Vector2i(SPRITE_SIZE)));
 		walk_.AddFrame(1.0f,
-			sf::IntRect(sf::Vector2i(i * SPRITE_SIZE.y, 80 + SPRITE_SIZE.x), sf::Vector2i(SPRITE_SIZE)));
+			sf::IntRect(sf::Vector2i(x, 80 + static_cast<int>(SPRITE_SIZE.y)), sf::Vector2i(SPRITE_SIZE)));
 	}
 }
 
@@ -61,10 +62,11 @@ Player::Player(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& c
 {
 	for (int i = 0; i < 6; ++i)
 	{
+		int x = i * static_cast<int>(SPRITE_SIZE.x);
 		idle_.AddFrame(1.0f,
-			sf::IntRect(sf::Vector2i(i * SPRITE_SIZE.y, 80), sf::Vector2i(SPRITE_SIZE)));
+			sf::IntRect(sf::Vector2i(x, 80), sf::Vector2i(SPRITE_SIZE)));
 		walk_.AddFrame(1.0f,
-			sf::IntRect(sf::Vector2i(i * SPRITE_SIZE.y, 80 + SPRITE_SIZE.x), sf::Vector2i(SPRITE_SIZE)));
+			sf::IntRect(sf::Vector2i(x, 80 + static_cast<int>(SPRITE_SIZE.y)), sf::Vector2i(SPRITE_SIZE)));
 	}
 }
 

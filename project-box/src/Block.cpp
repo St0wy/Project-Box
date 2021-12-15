@@ -1,5 +1,6 @@
 #include "Block.h"
 
+#include "Consts.h"
 #include "RessourceManager.h"
 
 Block::Block(b2World& world, const b2Vec2 position)
@@ -20,7 +21,7 @@ Block::Block(b2World& world, const b2Vec2 position)
 
 	// Load and set texture
 	const std::optional<sf::Texture*> texture = 
-		RessourceManager::GetInstance()->GetTexture("./data/block.png");
+		RessourceManager::GetInstance()->GetTexture(BLOCK_SPRITE_PATH);
 	const sf::Texture* blockTexture = texture.value();
 	SetTexture(*blockTexture);
 }

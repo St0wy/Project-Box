@@ -31,10 +31,10 @@ void Game::Update()
 	constexpr float factor = 2.0f / 16.0f;
 
 	// Create ground
-	Ground ground(world_, groundHalfWidth, groundHalfHeight, b2Vec2(0.0f, -15.0f));
+	Ground ground(world_, groundHalfWidth, groundHalfHeight, b2Vec2(groundHalfWidth - 5, -15.0f));
 
 	// Create block
-	Block block(world_, b2Vec2(0.0f, 0.0f));
+	Block block(world_, b2Vec2(5.0f, 0.0f));
 	block.setScale(factor, factor);
 
 	// Create player
@@ -63,6 +63,7 @@ void Game::Update()
 
 		world_.Step(PHYSICS_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 		player.Update(deltaTime);
+		block.Update(deltaTime);
 		sf::View view = window_.getView();
 		sf::Vector2f viewPos = view.getCenter();
 		view.setCenter(player.getPosition().x, viewPos.y);
