@@ -22,4 +22,5 @@ constexpr int32 VELOCITY_ITERATIONS = 6;
 
 constexpr char SPRITESHEET_PATH[] = "./data/sprites/char_spritesheet.png";
 constexpr char BLOCK_SPRITE_PATH[] = "./data/sprites/block.png";
+constexpr char FONT_PATH[] = "./data/fonts/upheaval.ttf";
 const sf::Vector2u SPRITE_SIZE(16u, 16u);

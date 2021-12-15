@@ -12,4 +12,5 @@ class PlayerContactListener final : public b2ContactListener
 	static void CheckEndPlayer(b2Fixture* fixture);
 	static Player* GetPlayerPointer(b2Fixture* fixture);
 	static bool IsFootSensor(b2Fixture* fixture);
+	static void CheckStartFlag(b2Fixture* fixture);
 };

@@ -36,7 +36,6 @@ find_package(box2d CONFIG REQUIRED)
 include_directories(include/)
 
 # Add source to this project's executable.  
-# add_executable (${EXECUTABLE_CUSTOM_NAME} "main.cpp"  "code.cpp")
 file(GLOB_RECURSE PROJECT_SRC src/*.cpp include/*.h)
 add_executable(${EXECUTABLE_CUSTOM_NAME} WIN32 ${PROJECT_SRC})
 
