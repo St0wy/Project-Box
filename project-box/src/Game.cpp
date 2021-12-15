@@ -36,21 +36,21 @@ void Game::Update()
 	Ground ground(world_, groundHalfWidth, groundHalfHeight, b2Vec2(groundHalfWidth - 5, -15.0f));
 
 	// Create block
-	//entities_.emplace_back(std::make_unique<Block>(world_, b2Vec2(5.0f, 0.0f)));
+	entities_.emplace_back(std::make_unique<Block>(world_, b2Vec2(5.0f, 0.0f)));
 
 	// Create finish line
-	//entities_.emplace_back(std::make_unique<FinishLine>(world_, b2Vec2(15.0f, 0.0f)));
+	entities_.emplace_back(std::make_unique<FinishLine>(world_, b2Vec2(15.0f, 0.0f)));
 
 	// Create player
-	//entities_.emplace_back(std::make_unique<Player>(world_));
-	//auto player = dynamic_cast<Player*>(entities_[2].get());
+	entities_.emplace_back(std::make_unique<Player>(world_));
+	auto player = dynamic_cast<Player*>(entities_[2].get());
 
 	PlayerContactListener playerContactListener;
 	world_.SetContactListener(&playerContactListener);
 
 	// Winning text
 	sf::Font upheav;
-	if(!upheav.loadFromFile(FONT_PATH))
+	if (!upheav.loadFromFile(FONT_PATH))
 	{
 		std::cout << "Error loading font\n";
 	}
@@ -59,13 +59,12 @@ void Game::Update()
 	text.setFont(upheav);
 	text.setString("You Win");
 	text.setFillColor(sf::Color::Red);
+	text.setScale(SCALE_FACTOR / 8.0f, SCALE_FACTOR / 8.0f);
 	//center text
-	//sf::FloatRect textRect = text.getLocalBounds();
-	//text.setOrigin(textRect.left + textRect.width / 2.0f,
-	//	textRect.top + textRect.height / 2.0f);
-	//text.setPosition(sf::Vector2f(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f));
-	text.setCharacterSize(24);
-	text.setPosition(0,0);
+	sf::FloatRect textRect = text.getLocalBounds();
+	text.setOrigin(textRect.width / 2.0f, textRect.height / 2.0f);
+	text.setCharacterSize(192);
+	text.setPosition(-5, -2);
 
 	// Main loop
 	sf::Clock clock;
@@ -81,45 +80,47 @@ void Game::Update()
 		}
 
 		// Only update with focus
-		//if (window_.hasFocus() && GameManager::GetInstance()->GetState() == GameState::Playing)
-		//{
-		//	// Step the physics
-		//	world_.Step(PHYSICS_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+		if (window_.hasFocus() && GameManager::GetInstance()->GetState() == GameState::Playing)
+		{
+			// Step the physics
+			world_.Step(PHYSICS_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
-		//	// Update the entites
+			// Update the entites
 
-		//	for (const auto& entity : entities_)
-		//	{
-		//		entity->Update(deltaTime);
-		//	}
+			for (const auto& entity : entities_)
+			{
+				entity->Update(deltaTime);
+			}
 
-		//	// Move the cam to follow the player
-		//	//sf::View view = window_.getView();
-		//	//sf::Vector2f viewPos = view.getCenter();
-		//	//view.setCenter(player->getPosition().x, viewPos.y);
-		//	//window_.setView(view);
-		//}
+			// Move the cam to follow the player
+			sf::View view = window_.getView();
+			sf::Vector2f viewPos = view.getCenter();
+			view.setCenter(player->getPosition().x, viewPos.y);
+			window_.setView(view);
+		}
 
 		// Rendering
 		window_.clear(sf::Color::Black);
 
 		// Render all the entities
-		window_.draw(text);
-		//for (const auto& entity : entities_)
-		//{
-		//	window_.draw(*entity);
-		//}
-		//window_.draw(ground);
+		for (const auto& entity : entities_)
+		{
+			window_.draw(*entity);
+		}
+		window_.draw(ground);
 
-		//if (drawColliders_)
-		//{
-		//	DrawColliders();
-		//}
-		//window_.draw(text);
+		if (drawColliders_)
+		{
+			DrawColliders();
+		}
 
-		//if (GameManager::GetInstance()->GetState() == GameState::Winning)
-		//{
-		//}
+		if (GameManager::GetInstance()->GetState() == GameState::Winning)
+		{
+			sf::Vector2f oldPos = text.getPosition();
+			// minus 5 on the player pos to aproximatively center the text. Idk why the origin is not in the center
+			text.setPosition(player->getPosition().x - 5, oldPos.y);
+			window_.draw(text);
+		}
 
 		window_.display();
 	}
