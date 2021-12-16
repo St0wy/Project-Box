@@ -51,9 +51,11 @@ Player::Player(b2World& world)
 			sf::IntRect(sf::Vector2i(x, 80 + static_cast<int>(SPRITE_SIZE.y)), sf::Vector2i(SPRITE_SIZE)));
 	}
 
-	const auto playerTextureResult = RessourceManager::GetInstance()->GetTexture(SPRITESHEET_PATH);
-	const sf::Texture* playerTexture = playerTextureResult.value();
-	SetTexture(*playerTexture, sf::IntRect(0, 80, 16, 16));
+	if (const auto playerTexture = RessourceManager::GetInstance()->GetTexture(SPRITESHEET_PATH))
+	{
+		SetTexture(*playerTexture, sf::IntRect(0, 80, 16, 16));
+
+	}
 
 	gravity_ = -(2 * JUMP_HEIGHT) / (TIME_TO_JUMP_APEX * TIME_TO_JUMP_APEX);
 	jumpVelocity_ = std::abs(gravity_) * TIME_TO_JUMP_APEX;

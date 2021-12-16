@@ -3,7 +3,6 @@
 #include <map>
 #include <string>
 #include <SFML/Graphics/Texture.hpp>
-#include <optional>
 
 class RessourceManager
 {
@@ -21,5 +20,5 @@ public:
 	RessourceManager& operator=(RessourceManager&& other) = delete;
 
 	static RessourceManager* GetInstance();
-	std::optional<sf::Texture*> GetTexture(const std::string& path);
+	sf::Texture* GetTexture(const std::string& path);
 };

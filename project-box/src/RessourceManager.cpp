@@ -15,7 +15,7 @@ RessourceManager* RessourceManager::GetInstance()
 	return instance_;
 }
 
-std::optional<sf::Texture*> RessourceManager::GetTexture(const std::string& path)
+sf::Texture* RessourceManager::GetTexture(const std::string& path)
 {
 	// ReSharper disable once CppTooWideScopeInitStatement
 	const auto texture = textures_.find(path);
@@ -30,5 +30,5 @@ std::optional<sf::Texture*> RessourceManager::GetTexture(const std::string& path
 		textures_[path] = std::move(newTexture);
 		return copy;
 	}
-	return {};
+	return nullptr;
 }

@@ -20,8 +20,8 @@ Block::Block(b2World& world, const b2Vec2 position)
 	body_->CreateFixture(&collisionShape, 0.0f);
 
 	// Load and set texture
-	const std::optional<sf::Texture*> texture = 
-		RessourceManager::GetInstance()->GetTexture(BLOCK_SPRITE_PATH);
-	const sf::Texture* blockTexture = texture.value();
-	SetTexture(*blockTexture);
+	if (const sf::Texture* texture = RessourceManager::GetInstance()->GetTexture(BLOCK_SPRITE_PATH))
+	{
+		SetTexture(*texture);
+	}
 }
