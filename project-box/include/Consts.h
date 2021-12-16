@@ -1,7 +1,7 @@
 #pragma once
 
 constexpr unsigned FRAMERATE = 60;
-constexpr char WINDOW_NAME[] = "Labyrinthe de la mort";
+constexpr char WINDOW_NAME[] = "Project Box";
 
 constexpr int WINDOW_SCALE = 100;
 constexpr int WINDOW_WIDTH = 16 * WINDOW_SCALE;
