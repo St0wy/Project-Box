@@ -7,7 +7,9 @@
 #include "Block.h"
 #include "FinishLine.h"
 #include "GameManager.h"
+#include "Locator.h"
 #include "VecUtils.h"
+#include "Audio/SfmlAudio.h"
 
 #include <iostream>
 
@@ -27,10 +29,16 @@ Game::Game()
 	b2World world(gravity);
 }
 
-void Game::Update()
+void Game::startMainLoop()
 {
 	constexpr float groundHalfWidth = 50.0f;
 	constexpr float groundHalfHeight = 10.0f;
+
+	// Init audio locator
+	Locator::init();
+	auto sfmlAudio = std::make_unique<SfmlAudio>();
+	sfmlAudio->init();
+	Locator::provide(sfmlAudio.get());
 
 	// Create ground
 	Ground ground(world_, groundHalfWidth, groundHalfHeight, b2Vec2(groundHalfWidth - 5, -15.0f));
@@ -77,9 +85,12 @@ void Game::Update()
 		{
 			if (event.type == sf::Event::Closed)
 				window_.close();
+			if (event.type == sf::Event::KeyPressed)
+			{
+			}
 		}
 
-		// Only update with focus
+		// Only startMainLoop with focus
 		if (window_.hasFocus() && GameManager::GetInstance()->GetState() == GameState::Playing)
 		{
 			// Step the physics
@@ -111,7 +122,7 @@ void Game::Update()
 
 		if (drawColliders_)
 		{
-			DrawColliders();
+			drawColliders();
 		}
 
 		if (GameManager::GetInstance()->GetState() == GameState::Winning)
@@ -126,15 +137,15 @@ void Game::Update()
 	}
 }
 
-void Game::DrawColliders()
+void Game::drawColliders()
 {
 	for (const auto& entity : entities_)
 	{
-		DrawBody(entity->GetBody());
+		drawBody(entity->GetBody());
 	}
 }
 
-void Game::DrawBody(b2Body* body)
+void Game::drawBody(b2Body* body)
 {
 	b2Fixture* fixture = body->GetFixtureList();
 	while (fixture != nullptr)

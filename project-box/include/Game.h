@@ -13,11 +13,11 @@ private:
 	b2World world_;
 	bool drawColliders_ = false;
 	std::vector<std::unique_ptr<Entity>> entities_;
+
 public:
 	Game();
 
-	void Update();
-
-	void DrawColliders();
-	void DrawBody(b2Body* body);
+	void startMainLoop();
+	void drawColliders();
+	void drawBody(b2Body* body);
 };

@@ -12,7 +12,6 @@ protected:
 public:
 	Entity();
 	explicit Entity(b2World& world);
-	Entity(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& collisionShape);
 
 	b2Body* GetBody() const;
 	void SetBody(b2Body* body);

@@ -3,6 +3,7 @@
 #include "Consts.h"
 #include "VecUtils.h"
 #include "FixtureType.h"
+#include "Locator.h"
 #include "RessourceManager.h"
 
 Player::Player(b2World& world)
@@ -11,6 +12,7 @@ Player::Player(b2World& world)
 	state_(PlayerState::Idle),
 	idle_(GetSprite(), 0.6f),
 	walk_(GetSprite(), 0.6f),
+	oldIsInputingJump_(false),
 	velocityXSmoothing_(0)
 {
 	b2BodyDef entityBodyDef;
@@ -33,7 +35,7 @@ Player::Player(b2World& world)
 	GetBody()->CreateFixture(&fixtureDef);
 
 	b2PolygonShape footPolygonShape;
-	footPolygonShape.SetAsBox(0.99f, 0.1f, b2Vec2(0, -1), 0);
+	footPolygonShape.SetAsBox(0.99f, 0.01f, b2Vec2(0, -1), 0);
 
 	b2FixtureDef footFixtureDef;
 	footFixtureDef.isSensor = true;
@@ -92,6 +94,16 @@ b2Vec2 Player::ComputeMovementVec(const sf::Time deltaTime)
 	if (isInputingJump && IsGrounded())
 	{
 		moveVel_.y = jumpVelocity_;
+		if (!oldIsInputingJump_)
+		{
+			AudioService* audio = Locator::getAudio();
+			audio->playSound(SoundType::Jump);
+			oldIsInputingJump_ = true;
+		}
+	}
+	else
+	{
+		oldIsInputingJump_ = false;
 	}
 	moveVel_.x = moveDirection * MOVE_SPEED;
 	moveVel_.y += gravity_ * deltaTime.asSeconds();

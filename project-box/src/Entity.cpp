@@ -32,19 +32,6 @@ Entity::Entity(b2World& world)
 	setScale(SCALE_FACTOR, SCALE_FACTOR);
 }
 
-Entity::Entity(b2World& world, const b2BodyDef& bodyDef, const b2PolygonShape& collisionShape)
-	:body_(world.CreateBody(&bodyDef))
-{
-	// Create fixture
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &collisionShape;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 1.0f;
-
-	body_->CreateFixture(&fixtureDef);
-	setScale(SCALE_FACTOR, SCALE_FACTOR);
-}
-
 b2Body* Entity::GetBody() const
 {
 	return body_;

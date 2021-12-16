@@ -6,15 +6,7 @@
 
 class Player final : public Entity
 {
-private:
-	int32 footContactsCounter_;
-	PlayerState state_;
-	FrameAnimation idle_;
-	FrameAnimation walk_;
-	float gravity_;
-	float jumpVelocity_;
-	b2Vec2 moveVel_;
-	float velocityXSmoothing_;
+
 public:
 	static constexpr float MOVE_SPEED = 10.0;
 	static constexpr float JUMP_HEIGHT = 6.5f;
@@ -34,4 +26,14 @@ public:
 
 	void StartContact();
 	void EndContact();
+private:
+	int32 footContactsCounter_;
+	PlayerState state_;
+	FrameAnimation idle_;
+	FrameAnimation walk_;
+	bool oldIsInputingJump_;
+	float gravity_;
+	float jumpVelocity_;
+	b2Vec2 moveVel_;
+	float velocityXSmoothing_;
 };
