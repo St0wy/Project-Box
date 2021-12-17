@@ -1,7 +1,7 @@
 #include "FinishLine.h"
 
-#include "Consts.h"
-#include "RessourceManager.h"
+#include "Locator.h"
+#include "Texture/TextureService.h"
 
 FinishLine::FinishLine(b2World& world, const b2Vec2 position)
 	: Entity()
@@ -21,8 +21,7 @@ FinishLine::FinishLine(b2World& world, const b2Vec2 position)
 	body_->CreateFixture(&collisionShape, 0.0f);
 
 	// Load and set texture
-	const std::optional<sf::Texture*> texture =
-		RessourceManager::GetInstance()->GetTexture(SPRITESHEET_PATH);
-	const sf::Texture* blockTexture = texture.value();
-	SetTexture(*blockTexture, sf::IntRect(256, 0, 16, 79));
+	TextureService* textureService = Locator::getTextureService();
+	const sf::Texture* spritesheetTexture = textureService->getTexture(TextureType::CharSpritesheet);
+	SetTexture(*spritesheetTexture, sf::IntRect(256, 0, 16, 79));
 }

@@ -4,7 +4,6 @@
 #include "VecUtils.h"
 #include "FixtureType.h"
 #include "Locator.h"
-#include "RessourceManager.h"
 
 Player::Player(b2World& world)
 	:Entity(),
@@ -53,7 +52,8 @@ Player::Player(b2World& world)
 			sf::IntRect(sf::Vector2i(x, 80 + static_cast<int>(SPRITE_SIZE.y)), sf::Vector2i(SPRITE_SIZE)));
 	}
 
-	if (const auto playerTexture = RessourceManager::GetInstance()->GetTexture(SPRITESHEET_PATH))
+	TextureService* textureService = Locator::getTextureService();
+	if (const auto playerTexture = textureService->getTexture(TextureType::CharSpritesheet))
 	{
 		SetTexture(*playerTexture, sf::IntRect(0, 80, 16, 16));
 

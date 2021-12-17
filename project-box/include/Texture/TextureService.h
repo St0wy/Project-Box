@@ -6,9 +6,9 @@ class TextureService
 {
 public:
 	~TextureService() = default;
-	static void init();
-	static sf::Texture* getTexture(TextureType textureType);
+	void init();
+	sf::Texture* getTexture(TextureType textureType);
 private:
-	static sf::Texture blockTexture_;
-	static sf::Texture charSpritesheet_;
+	sf::Texture blockTexture_;
+	sf::Texture charSpritesheet_;
 };

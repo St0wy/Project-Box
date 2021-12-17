@@ -40,6 +40,16 @@ void Game::startMainLoop()
 	sfmlAudio->init();
 	Locator::provide(sfmlAudio.get());
 
+	// Init texture locator
+	auto textureService = std::make_unique<TextureService>();
+	textureService->init();
+	Locator::provide(textureService.get());
+
+	// Init the game manager
+	auto gameManager = std::make_unique<GameManager>();
+	Locator::provide(gameManager.get());
+
+
 	// Create ground
 	Ground ground(world_, groundHalfWidth, groundHalfHeight, b2Vec2(groundHalfWidth - 5, -15.0f));
 
@@ -85,13 +95,11 @@ void Game::startMainLoop()
 		{
 			if (event.type == sf::Event::Closed)
 				window_.close();
-			if (event.type == sf::Event::KeyPressed)
-			{
-			}
 		}
 
 		// Only startMainLoop with focus
-		if (window_.hasFocus() && GameManager::GetInstance()->GetState() == GameState::Playing)
+		GameManager* gm = Locator::getGameManager();
+		if (window_.hasFocus() && gm->getState() == GameState::Playing)
 		{
 			// Step the physics
 			world_.Step(PHYSICS_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
@@ -125,7 +133,7 @@ void Game::startMainLoop()
 			drawColliders();
 		}
 
-		if (GameManager::GetInstance()->GetState() == GameState::Winning)
+		if (gm->getState() == GameState::Winning)
 		{
 			sf::Vector2f oldPos = text.getPosition();
 			// minus 5 on the player pos to aproximatively center the text. Idk why the origin is not in the center

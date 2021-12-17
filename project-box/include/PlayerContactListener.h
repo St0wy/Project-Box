@@ -8,9 +8,9 @@ class PlayerContactListener final : public b2ContactListener
 {
 	void BeginContact(b2Contact* contact) override;
 	void EndContact(b2Contact* contact) override;
-	static void CheckStartPlayer(b2Fixture* fixture);
-	static void CheckEndPlayer(b2Fixture* fixture);
-	static Player* GetPlayerPointer(b2Fixture* fixture);
-	static bool IsFootSensor(b2Fixture* fixture);
-	static void CheckStartFlag(b2Fixture* fixture);
+	static void checkStartPlayer(b2Fixture* fixture);
+	static void checkEndPlayer(b2Fixture* fixture);
+	static Player* getPlayerPointer(b2Fixture* fixture);
+	static bool isFootSensor(b2Fixture* fixture);
+	static void checkStartFlag(b2Fixture* fixture);
 };

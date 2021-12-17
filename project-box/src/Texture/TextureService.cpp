@@ -1,15 +1,19 @@
 #include "Texture/TextureService.h"
 #include "Consts.h"
 
-sf::Texture TextureService::blockTexture_;
-sf::Texture TextureService::charSpritesheet_;
-
 void TextureService::init()
 {
 	blockTexture_.loadFromFile(BLOCK_SPRITE_PATH);
+	charSpritesheet_.loadFromFile(SPRITESHEET_PATH);
 }
 
-sf::Texture* TextureService::getTexture(TextureType textureType)
+sf::Texture* TextureService::getTexture(const TextureType textureType)
 {
-	// TODO Return texture
+	switch (textureType) {
+	case TextureType::CharSpritesheet:
+		return &charSpritesheet_;
+	default:  // NOLINT(clang-diagnostic-covered-switch-default)
+	case TextureType::Block:
+		return &blockTexture_;
+	}
 }

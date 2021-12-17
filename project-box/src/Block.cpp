@@ -1,7 +1,6 @@
 #include "Block.h"
 
-#include "Consts.h"
-#include "RessourceManager.h"
+#include "Locator.h"
 
 Block::Block(b2World& world, const b2Vec2 position)
 {
@@ -19,8 +18,10 @@ Block::Block(b2World& world, const b2Vec2 position)
 
 	body_->CreateFixture(&collisionShape, 0.0f);
 
+	const auto textureService = Locator::getTextureService();
+
 	// Load and set texture
-	if (const sf::Texture* texture = RessourceManager::GetInstance()->GetTexture(BLOCK_SPRITE_PATH))
+	if (const sf::Texture* texture = textureService->getTexture(TextureType::Block))
 	{
 		SetTexture(*texture);
 	}
