@@ -6,9 +6,6 @@
 class Entity
 	: public sf::Drawable, public sf::Transformable
 {
-protected:
-	b2Body* body_;
-	sf::Sprite sprite_;
 public:
 	Entity();
 	explicit Entity(b2World& world);
@@ -24,4 +21,7 @@ public:
 	virtual void update(sf::Time deltaTime);
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+protected:
+	b2Body* body_;
+	sf::Sprite sprite_;
 };
