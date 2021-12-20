@@ -7,8 +7,8 @@ class Entity
 	: public sf::Drawable, public sf::Transformable
 {
 public:
-	Entity();
 	explicit Entity(b2World& world);
+	~Entity() override;
 
 	b2Body* getBody() const;
 	void setBody(b2Body* body);
@@ -22,6 +22,7 @@ public:
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 protected:
+	b2World& world_;
 	b2Body* body_;
 	sf::Sprite sprite_;
 };

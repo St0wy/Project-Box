@@ -3,33 +3,15 @@
 #include "Consts.h"
 #include "VecUtils.h"
 
-Entity::Entity() : body_(nullptr)
+Entity::Entity(b2World& world)
+	: world_(world), body_(nullptr)
 {
 	setScale(SCALE_FACTOR, SCALE_FACTOR);
 }
 
-Entity::Entity(b2World& world)
+Entity::~Entity()
 {
-	// Create body
-	b2BodyDef entityBodyDef;
-	entityBodyDef.type = b2_dynamicBody;
-	entityBodyDef.position.Set(0.0f, 0.0f);
-	// Add the entity to the body's user data so it can be retrived when a collision happens
-	entityBodyDef.userData.pointer = reinterpret_cast<std::uintptr_t>(this);
-	body_ = world.CreateBody(&entityBodyDef);
-
-	// Create collision shape
-	b2PolygonShape collisionShape;
-	collisionShape.SetAsBox(1.0f, 1.0f);
-
-	// Create fixture
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &collisionShape;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
-
-	body_->CreateFixture(&fixtureDef);
-	setScale(SCALE_FACTOR, SCALE_FACTOR);
+	world_.DestroyBody(body_);
 }
 
 b2Body* Entity::getBody() const

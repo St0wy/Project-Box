@@ -3,7 +3,7 @@
 #include "VecUtils.h"
 
 Ground::Ground(b2World& world, float groundHalfWidth, float groundHalfHeight, b2Vec2 position)
-	: Entity()
+	: Entity(world)
 {
 	// Create ground
 	b2BodyDef groundBodyDef;

@@ -6,7 +6,7 @@
 #include "Locator.h"
 
 Player::Player(b2World& world)
-	:Entity(),
+	:Entity(world),
 	footContactsCounter_(0),
 	state_(PlayerState::Idle),
 	idle_(getSprite(), 0.6f),

@@ -22,7 +22,7 @@ Game::Game()
 	window_.setFramerateLimit(FRAMERATE);
 
 	// Create view (camera) of the scene and set it to the window
-	window_.setView(sf::View(sf::Vector2f(0, 0), sf::Vector2f(CAM_WIDTH, CAM_HEIGHT)));
+	window_.setView(DEFAULT_VIEW);
 
 	// Create box2d world
 	const b2Vec2 gravity(0.0f, GRAVITY_STRENGHT);
@@ -31,8 +31,7 @@ Game::Game()
 
 void Game::startMainLoop()
 {
-	constexpr float groundHalfWidth = 50.0f;
-	constexpr float groundHalfHeight = 10.0f;
+
 
 	// Init audio locator
 	Locator::init();
@@ -49,39 +48,44 @@ void Game::startMainLoop()
 	auto gameManager = std::make_unique<GameManager>();
 	Locator::provide(gameManager.get());
 
-	// Create ground
-	entities_.emplace_back(std::make_unique<Ground>(world_, groundHalfWidth, groundHalfHeight, b2Vec2(groundHalfWidth - 5, -15.0f)));
-
-	// Create block
-	entities_.emplace_back(std::make_unique<Block>(world_, b2Vec2(5.0f, 0.0f)));
-
-	// Create finish line
-	entities_.emplace_back(std::make_unique<FinishLine>(world_, b2Vec2(15.0f, 0.0f)));
-
-	// Create player
-	entities_.emplace_back(std::make_unique<Player>(world_));
-	auto player = dynamic_cast<Player*>(entities_[3].get());
+	// Create the entities and get the player
+	auto player = createEntities();
 
 	PlayerContactListener playerContactListener;
 	world_.SetContactListener(&playerContactListener);
 
-	// Winning text
+	// Load game font
 	sf::Font upheav;
 	if (!upheav.loadFromFile(FONT_PATH))
 	{
 		std::cout << "Error loading font\n";
 	}
 
-	sf::Text text;
-	text.setFont(upheav);
-	text.setString("You Win");
-	text.setFillColor(sf::Color::Red);
-	text.setScale(SCALE_FACTOR / 8.0f, SCALE_FACTOR / 8.0f);
-	//center text
-	sf::FloatRect textRect = text.getLocalBounds();
-	text.setOrigin(textRect.width / 2.0f, textRect.height / 2.0f);
-	text.setCharacterSize(192);
-	text.setPosition(-5, -2);
+	// Create win text
+	sf::Text winText;
+	winText.setFont(upheav);
+	winText.setString("You Win");
+	winText.setFillColor(sf::Color::Red);
+	winText.setCharacterSize(192);
+	winText.setScale(SCALE_FACTOR / 8.0f, SCALE_FACTOR / 8.0f);
+
+	// center text
+	sf::FloatRect textRect = winText.getLocalBounds();
+	winText.setOrigin(textRect.width / 2.0f, textRect.height / 2.0f);
+	winText.setPosition(-5, -2);
+
+	// Create replay text
+	sf::Text replayText;
+	replayText.setFont(upheav);
+	replayText.setString("Press space to replay");
+	replayText.setFillColor(sf::Color::Red);
+	replayText.setCharacterSize(192);
+	replayText.setScale(SCALE_FACTOR / 16.0f, SCALE_FACTOR / 16.0f);
+
+	textRect = replayText.getLocalBounds();
+	replayText.setOrigin(textRect.width / 2.0f, textRect.height / 2.0f);
+	replayText.setPosition(-5, 0);
+
 
 	// Main loop
 	sf::Clock clock;
@@ -133,10 +137,21 @@ void Game::startMainLoop()
 
 		if (gm->getState() == GameState::Winning)
 		{
-			sf::Vector2f oldPos = text.getPosition();
-			// minus 5 on the player pos to aproximatively center the text. Idk why the origin is not in the center
-			text.setPosition(player->getPosition().x - 5, oldPos.y);
-			window_.draw(text);
+			sf::Vector2f oldPos = winText.getPosition();
+			winText.setPosition(player->getPosition().x, oldPos.y);
+
+			oldPos = replayText.getPosition();
+			replayText.setPosition(player->getPosition().x, oldPos.y);
+
+			// Draw win text
+			window_.draw(winText);
+			window_.draw(replayText);
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+			{
+				clear();
+				player = createEntities();
+			}
 		}
 
 		window_.display();
@@ -172,4 +187,38 @@ void Game::drawBody(b2Body* body)
 		window_.draw(convex);
 		fixture = fixture->GetNext();
 	}
+}
+
+void Game::clear()
+{
+	// Reset gamestate
+	GameManager* gm = Locator::getGameManager();
+	gm->setState(GameState::Playing);
+
+	// Reset view
+	window_.setView(DEFAULT_VIEW);
+
+	// Clear entities
+	entities_.clear();
+}
+
+Player* Game::createEntities()
+{
+	constexpr float groundHalfWidth = 50.0f;
+	constexpr float groundHalfHeight = 10.0f;
+
+	// Create ground
+	entities_.emplace_back(std::make_unique<Ground>(world_, groundHalfWidth, groundHalfHeight, b2Vec2(groundHalfWidth - 5, -15.0f)));
+
+	// Create block
+	entities_.emplace_back(std::make_unique<Block>(world_, b2Vec2(5.0f, 0.0f)));
+
+	// Create finish line
+	entities_.emplace_back(std::make_unique<FinishLine>(world_, b2Vec2(15.0f, 0.0f)));
+
+	// Create player, always do the player last
+	entities_.emplace_back(std::make_unique<Player>(world_));
+	const auto player = dynamic_cast<Player*>(entities_[entities_.size() - 1].get());
+
+	return player;
 }

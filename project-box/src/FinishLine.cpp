@@ -4,7 +4,7 @@
 #include "Texture/TextureService.h"
 
 FinishLine::FinishLine(b2World& world, const b2Vec2 position)
-	: Entity()
+	: Entity(world)
 {
 	// Create body
 	b2BodyDef entityBodyDef;

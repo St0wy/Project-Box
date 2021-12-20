@@ -3,6 +3,7 @@
 #include "Locator.h"
 
 Block::Block(b2World& world, const b2Vec2 position)
+	: Entity(world)
 {
 	// Create body
 	b2BodyDef entityBodyDef;

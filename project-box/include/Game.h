@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity.h"
+#include "Player.h"
 
 #include <box2d/box2d.h>
 #include <SFML/Graphics.hpp>
@@ -13,6 +14,8 @@ public:
 	void startMainLoop();
 	void drawColliders();
 	void drawBody(b2Body* body);
+	void clear();
+	Player* createEntities();
 private:
 	sf::RenderWindow window_;
 	b2Vec2 gravity_;

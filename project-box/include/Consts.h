@@ -1,4 +1,5 @@
 #pragma once
+#include "SFML/Graphics/View.hpp"
 
 constexpr unsigned FRAMERATE = 60;
 constexpr char WINDOW_NAME[] = "Project Box";
@@ -27,3 +28,5 @@ constexpr char FONT_PATH[] = "./data/fonts/upheaval.ttf";
 constexpr char JUMP_SOUND_PATH[] = "./data/sounds/jump.wav";
 
 const sf::Vector2u SPRITE_SIZE(16u, 16u);
+
+const sf::View DEFAULT_VIEW(sf::Vector2f(0, 0), sf::Vector2f(CAM_WIDTH, CAM_HEIGHT));
