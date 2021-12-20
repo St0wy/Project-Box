@@ -2,7 +2,6 @@
 #include "Frame.h"
 
 #include <vector>
-
 #include <SFML/Graphics/Sprite.hpp>
 
 // Inspired by https://bromeon.ch/libraries/thor/index.html
@@ -19,7 +18,7 @@ private:
 public:
 	explicit FrameAnimation(sf::Sprite& target, float duration);
 
-	void AddFrame(float relativeDuration, const sf::IntRect& subrect);
-	void AddFrame(float relativeDuration, const sf::IntRect& subrect, sf::Vector2f origin);
-	void Update(float elapsed);
+	void addFrame(float relativeDuration, const sf::IntRect& subrect);
+	void addFrame(float relativeDuration, const sf::IntRect& subrect, sf::Vector2f origin);
+	void update(float elapsed);
 };

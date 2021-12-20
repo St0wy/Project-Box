@@ -28,7 +28,7 @@ void PlayerContactListener::checkStartPlayer(b2Fixture* fixture)
 {
 	if (Player* player = getPlayerPointer(fixture); player && isFootSensor(fixture))
 	{
-		player->StartContact();
+		player->startContact();
 	}
 }
 
@@ -36,7 +36,7 @@ void PlayerContactListener::checkEndPlayer(b2Fixture* fixture)
 {
 	if (Player* player = getPlayerPointer(fixture); player && isFootSensor(fixture))
 	{
-		player->EndContact();
+		player->endContact();
 	}
 }
 

@@ -5,19 +5,19 @@ FrameAnimation::FrameAnimation(sf::Sprite& target, const float duration)
 {
 }
 
-void FrameAnimation::AddFrame(float relativeDuration, const sf::IntRect& subrect)
+void FrameAnimation::addFrame(float relativeDuration, const sf::IntRect& subrect)
 {
 	frames_.emplace_back(relativeDuration, subrect);
 	sumFramesDuration_ += relativeDuration;
 }
 
-void FrameAnimation::AddFrame(float relativeDuration, const sf::IntRect& subrect, sf::Vector2f origin)
+void FrameAnimation::addFrame(float relativeDuration, const sf::IntRect& subrect, sf::Vector2f origin)
 {
 	frames_.emplace_back(relativeDuration, subrect, origin);
 	sumFramesDuration_ += relativeDuration;
 }
 
-void FrameAnimation::Update(const float elapsed)
+void FrameAnimation::update(const float elapsed)
 {
 	totalProgress_ += elapsed;
 	float progress = totalProgress_;

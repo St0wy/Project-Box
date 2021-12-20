@@ -32,19 +32,19 @@ Entity::Entity(b2World& world)
 	setScale(SCALE_FACTOR, SCALE_FACTOR);
 }
 
-b2Body* Entity::GetBody() const
+b2Body* Entity::getBody() const
 {
 	return body_;
 }
 
-void Entity::SetBody(b2Body* body)
+void Entity::setBody(b2Body* body)
 {
 	body_ = body;
 }
 
-void Entity::Update(const sf::Time deltaTime)
+void Entity::update(const sf::Time deltaTime)
 {
-	setPosition(Box2dVecToSfml(body_->GetPosition()));
+	setPosition(box2dVecToSfml(body_->GetPosition()));
 }
 
 void Entity::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -53,13 +53,13 @@ void Entity::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(sprite_, states);
 }
 
-void Entity::SetTexture(const sf::Texture& texture, const sf::IntRect& textureRect)
+void Entity::setTexture(const sf::Texture& texture, const sf::IntRect& textureRect)
 {
 	sprite_.setTextureRect(textureRect);
-	this->SetTexture(texture);
+	this->setTexture(texture);
 }
 
-void Entity::SetTexture(const sf::Texture& texture)
+void Entity::setTexture(const sf::Texture& texture)
 {
 	sprite_.setTexture(texture);
 	const sf::IntRect textureRect = sprite_.getTextureRect();
@@ -68,7 +68,7 @@ void Entity::SetTexture(const sf::Texture& texture)
 	sprite_.setOrigin(xCenter, yCenter);
 }
 
-sf::Sprite& Entity::GetSprite()
+sf::Sprite& Entity::getSprite()
 {
 	return sprite_;
 }

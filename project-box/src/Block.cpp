@@ -23,6 +23,6 @@ Block::Block(b2World& world, const b2Vec2 position)
 	// Load and set texture
 	if (const sf::Texture* texture = textureService->getTexture(TextureType::Block))
 	{
-		SetTexture(*texture);
+		setTexture(*texture);
 	}
 }

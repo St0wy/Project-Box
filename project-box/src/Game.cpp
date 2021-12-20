@@ -49,9 +49,8 @@ void Game::startMainLoop()
 	auto gameManager = std::make_unique<GameManager>();
 	Locator::provide(gameManager.get());
 
-
 	// Create ground
-	Ground ground(world_, groundHalfWidth, groundHalfHeight, b2Vec2(groundHalfWidth - 5, -15.0f));
+	entities_.emplace_back(std::make_unique<Ground>(world_, groundHalfWidth, groundHalfHeight, b2Vec2(groundHalfWidth - 5, -15.0f)));
 
 	// Create block
 	entities_.emplace_back(std::make_unique<Block>(world_, b2Vec2(5.0f, 0.0f)));
@@ -61,7 +60,7 @@ void Game::startMainLoop()
 
 	// Create player
 	entities_.emplace_back(std::make_unique<Player>(world_));
-	auto player = dynamic_cast<Player*>(entities_[2].get());
+	auto player = dynamic_cast<Player*>(entities_[3].get());
 
 	PlayerContactListener playerContactListener;
 	world_.SetContactListener(&playerContactListener);
@@ -105,10 +104,9 @@ void Game::startMainLoop()
 			world_.Step(PHYSICS_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
 			// Update the entites
-
 			for (const auto& entity : entities_)
 			{
-				entity->Update(deltaTime);
+				entity->update(deltaTime);
 			}
 
 			// Move the cam to follow the player
@@ -118,7 +116,7 @@ void Game::startMainLoop()
 			window_.setView(view);
 		}
 
-		// Rendering
+		// Clear the window
 		window_.clear(sf::Color::Black);
 
 		// Render all the entities
@@ -126,8 +124,8 @@ void Game::startMainLoop()
 		{
 			window_.draw(*entity);
 		}
-		window_.draw(ground);
 
+		// Render the colliders
 		if (drawColliders_)
 		{
 			drawColliders();
@@ -149,7 +147,7 @@ void Game::drawColliders()
 {
 	for (const auto& entity : entities_)
 	{
-		drawBody(entity->GetBody());
+		drawBody(entity->getBody());
 	}
 }
 
@@ -166,7 +164,7 @@ void Game::drawBody(b2Body* body)
 		{
 			b2Vec2 point = polygonShape->m_vertices[j];
 			auto worldPoint = body->GetWorldPoint(point);
-			convex.setPoint(j, Box2dVecToSfml(worldPoint));
+			convex.setPoint(j, box2dVecToSfml(worldPoint));
 		}
 		convex.setFillColor(sf::Color::Transparent);
 		convex.setOutlineColor(sf::Color::Red);

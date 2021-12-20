@@ -23,5 +23,5 @@ FinishLine::FinishLine(b2World& world, const b2Vec2 position)
 	// Load and set texture
 	TextureService* textureService = Locator::getTextureService();
 	const sf::Texture* spritesheetTexture = textureService->getTexture(TextureType::CharSpritesheet);
-	SetTexture(*spritesheetTexture, sf::IntRect(256, 0, 16, 79));
+	setTexture(*spritesheetTexture, sf::IntRect(256, 0, 16, 79));
 }

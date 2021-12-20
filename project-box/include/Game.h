@@ -11,7 +11,7 @@ private:
 	sf::RenderWindow window_;
 	b2Vec2 gravity_;
 	b2World world_;
-	bool drawColliders_ = false;
+	bool drawColliders_ = true;
 	std::vector<std::unique_ptr<Entity>> entities_;
 
 public:

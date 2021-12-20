@@ -13,15 +13,15 @@ public:
 	Entity();
 	explicit Entity(b2World& world);
 
-	b2Body* GetBody() const;
-	void SetBody(b2Body* body);
+	b2Body* getBody() const;
+	void setBody(b2Body* body);
 
-	void SetTexture(const sf::Texture& texture, const sf::IntRect& textureRect);
-	void SetTexture(const sf::Texture& texture);
+	void setTexture(const sf::Texture& texture, const sf::IntRect& textureRect);
+	void setTexture(const sf::Texture& texture);
 
-	sf::Sprite& GetSprite();
+	sf::Sprite& getSprite();
 
-	virtual void Update(sf::Time deltaTime);
+	virtual void update(sf::Time deltaTime);
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };

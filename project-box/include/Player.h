@@ -15,17 +15,12 @@ public:
 	static constexpr float ACCELERATION_TIME_GROUNDED = 0.1f;
 
 	explicit Player(b2World& world);
-
-	PlayerState GetState() const;
-
-	b2Vec2 ComputeMovementVec(const sf::Time deltaTime);
-
-	bool IsGrounded() const;
-
-	void Update(sf::Time deltaTime) override;
-
-	void StartContact();
-	void EndContact();
+	PlayerState getState() const;
+	b2Vec2 computeMovementVec(const sf::Time deltaTime);
+	bool isGrounded() const;
+	void update(sf::Time deltaTime) override;
+	void startContact();
+	void endContact();
 private:
 	int32 footContactsCounter_;
 	PlayerState state_;
@@ -35,5 +30,4 @@ private:
 	float gravity_;
 	float jumpVelocity_;
 	b2Vec2 moveVel_;
-	float velocityXSmoothing_;
 };

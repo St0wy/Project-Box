@@ -9,8 +9,8 @@ Player::Player(b2World& world)
 	:Entity(),
 	footContactsCounter_(0),
 	state_(PlayerState::Idle),
-	idle_(GetSprite(), 0.6f),
-	walk_(GetSprite(), 0.6f),
+	idle_(getSprite(), 0.6f),
+	walk_(getSprite(), 0.6f),
 	oldIsInputingJump_(false),
 	velocityXSmoothing_(0)
 {
@@ -30,8 +30,8 @@ Player::Player(b2World& world)
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;
 
-	SetBody(world.CreateBody(&entityBodyDef));
-	GetBody()->CreateFixture(&fixtureDef);
+	setBody(world.CreateBody(&entityBodyDef));
+	getBody()->CreateFixture(&fixtureDef);
 
 	b2PolygonShape footPolygonShape;
 	footPolygonShape.SetAsBox(0.99f, 0.01f, b2Vec2(0, -1), 0);
@@ -41,21 +41,21 @@ Player::Player(b2World& world)
 	constexpr auto sensorPtr = static_cast<uintptr_t>(FixtureType::PlayerFootSensor);
 	footFixtureDef.userData.pointer = sensorPtr;
 	footFixtureDef.shape = &footPolygonShape;
-	GetBody()->CreateFixture(&footFixtureDef);
+	getBody()->CreateFixture(&footFixtureDef);
 
 	for (int i = 0; i < 6; ++i)
 	{
 		const int x = i * static_cast<int>(SPRITE_SIZE.x);
-		idle_.AddFrame(1.0f,
+		idle_.addFrame(1.0f,
 			sf::IntRect(sf::Vector2i(x, 80), sf::Vector2i(SPRITE_SIZE)));
-		walk_.AddFrame(1.0f,
+		walk_.addFrame(1.0f,
 			sf::IntRect(sf::Vector2i(x, 80 + static_cast<int>(SPRITE_SIZE.y)), sf::Vector2i(SPRITE_SIZE)));
 	}
 
 	TextureService* textureService = Locator::getTextureService();
 	if (const auto playerTexture = textureService->getTexture(TextureType::CharSpritesheet))
 	{
-		SetTexture(*playerTexture, sf::IntRect(0, 80, 16, 16));
+		setTexture(*playerTexture, sf::IntRect(0, 80, 16, 16));
 
 	}
 
@@ -63,12 +63,12 @@ Player::Player(b2World& world)
 	jumpVelocity_ = std::abs(gravity_) * TIME_TO_JUMP_APEX;
 }
 
-PlayerState Player::GetState() const
+PlayerState Player::getState() const
 {
 	return state_;
 }
 
-b2Vec2 Player::ComputeMovementVec(const sf::Time deltaTime)
+b2Vec2 Player::computeMovementVec(const sf::Time deltaTime)
 {
 	const bool isInputingLeft = sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
@@ -85,13 +85,13 @@ b2Vec2 Player::ComputeMovementVec(const sf::Time deltaTime)
 	if (isInputingRight)
 		moveDirection = 1;
 
-	if (IsGrounded())
+	if (isGrounded())
 	{
 		moveVel_.y = 0;
 	}
 
 	// Jumping
-	if (isInputingJump && IsGrounded())
+	if (isInputingJump && isGrounded())
 	{
 		moveVel_.y = jumpVelocity_;
 		if (!oldIsInputingJump_)
@@ -113,16 +113,16 @@ b2Vec2 Player::ComputeMovementVec(const sf::Time deltaTime)
 	return moveVel_;
 }
 
-bool Player::IsGrounded() const
+bool Player::isGrounded() const
 {
 	return footContactsCounter_ > 0;
 }
 
-void Player::Update(const sf::Time deltaTime)
+void Player::update(const sf::Time deltaTime)
 {
-	const b2Vec2 vel = ComputeMovementVec(deltaTime);
+	const b2Vec2 vel = computeMovementVec(deltaTime);
 
-	if (vel.x == 0 || !IsGrounded()) {  // NOLINT(clang-diagnostic-float-equal)
+	if (vel.x == 0 || !isGrounded()) {  // NOLINT(clang-diagnostic-float-equal)
 		state_ = PlayerState::Idle;
 	}
 	else
@@ -141,27 +141,27 @@ void Player::Update(const sf::Time deltaTime)
 	}
 
 	// Apply move to body
-	GetBody()->SetLinearVelocity(vel);
+	getBody()->SetLinearVelocity(vel);
 
-	switch (GetState())
+	switch (getState())
 	{
 	case PlayerState::Idle:
-		idle_.Update(deltaTime.asSeconds());
+		idle_.update(deltaTime.asSeconds());
 		break;
 	case PlayerState::Walk:
-		walk_.Update(deltaTime.asSeconds());
+		walk_.update(deltaTime.asSeconds());
 		break;
 	}
 
-	Entity::Update(deltaTime);
+	Entity::update(deltaTime);
 }
 
-void Player::StartContact()
+void Player::startContact()
 {
 	footContactsCounter_ += 1;
 }
 
-void Player::EndContact()
+void Player::endContact()
 {
 	footContactsCounter_ -= 1;
 }
