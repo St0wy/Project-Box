@@ -31,8 +31,7 @@ Game::Game()
 
 void Game::startMainLoop()
 {
-
-
+#pragma region Locator
 	// Init audio locator
 	Locator::init();
 	auto sfmlAudio = std::make_unique<SfmlAudio>();
@@ -47,6 +46,7 @@ void Game::startMainLoop()
 	// Init the game manager
 	auto gameManager = std::make_unique<GameManager>();
 	Locator::provide(gameManager.get());
+#pragma endregion
 
 	// Create the entities and get the player
 	auto player = createEntities();
@@ -54,6 +54,7 @@ void Game::startMainLoop()
 	PlayerContactListener playerContactListener;
 	world_.SetContactListener(&playerContactListener);
 
+#pragma region Texts
 	// Load game font
 	sf::Font upheav;
 	if (!upheav.loadFromFile(FONT_PATH))
@@ -81,11 +82,21 @@ void Game::startMainLoop()
 	replayText.setFillColor(sf::Color::Red);
 	replayText.setCharacterSize(192);
 	replayText.setScale(SCALE_FACTOR / 16.0f, SCALE_FACTOR / 16.0f);
-
 	textRect = replayText.getLocalBounds();
 	replayText.setOrigin(textRect.width / 2.0f, textRect.height / 2.0f);
 	replayText.setPosition(-5, 0);
 
+	// Create dead text
+	sf::Text looseText;
+	looseText.setFont(upheav);
+	looseText.setString("You're Dead");
+	looseText.setFillColor(sf::Color::Red);
+	looseText.setCharacterSize(192);
+	looseText.setScale(SCALE_FACTOR / 8.0f, SCALE_FACTOR / 8.0f);
+	textRect = looseText.getLocalBounds();
+	looseText.setOrigin(textRect.width / 2.0f, textRect.height / 2.0f);
+	looseText.setPosition(-5, -2);
+#pragma endregion
 
 	// Main loop
 	sf::Clock clock;
@@ -143,8 +154,18 @@ void Game::startMainLoop()
 			oldPos = replayText.getPosition();
 			replayText.setPosition(player->getPosition().x, oldPos.y);
 
-			// Draw win text
 			window_.draw(winText);
+			window_.draw(replayText);
+		}
+		else if (gm->getState() == GameState::Dead)
+		{
+			sf::Vector2f oldPos = looseText.getPosition();
+			looseText.setPosition(player->getPosition().x, oldPos.y);
+
+			oldPos = replayText.getPosition();
+			replayText.setPosition(player->getPosition().x, oldPos.y);
+
+			window_.draw(looseText);
 			window_.draw(replayText);
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
@@ -152,6 +173,13 @@ void Game::startMainLoop()
 				clear();
 				player = createEntities();
 			}
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) &&
+			(gm->getState() == GameState::Dead || gm->getState() == GameState::Winning))
+		{
+			clear();
+			player = createEntities();
 		}
 
 		window_.display();

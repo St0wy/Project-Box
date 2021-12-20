@@ -30,3 +30,5 @@ constexpr char JUMP_SOUND_PATH[] = "./data/sounds/jump.wav";
 const sf::Vector2u SPRITE_SIZE(16u, 16u);
 
 const sf::View DEFAULT_VIEW(sf::Vector2f(0, 0), sf::Vector2f(CAM_WIDTH, CAM_HEIGHT));
+
+constexpr float DEATH_HEIGHT = -10.0f;

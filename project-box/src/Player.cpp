@@ -152,6 +152,13 @@ void Player::update(const sf::Time deltaTime)
 		break;
 	}
 
+	GameManager* gm = Locator::getGameManager();
+	// Check if fell
+	if (body_->GetPosition().y < DEATH_HEIGHT)
+	{
+		gm->setState(GameState::Dead);
+	}
+
 	Entity::update(deltaTime);
 }
 
