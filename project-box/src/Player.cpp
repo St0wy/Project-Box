@@ -11,8 +11,7 @@ Player::Player(b2World& world)
 	state_(PlayerState::Idle),
 	idle_(getSprite(), 0.6f),
 	walk_(getSprite(), 0.6f),
-	oldIsInputingJump_(false),
-	velocityXSmoothing_(0)
+	oldIsInputingJump_(false)
 {
 	b2BodyDef entityBodyDef;
 	entityBodyDef.type = b2_dynamicBody;
