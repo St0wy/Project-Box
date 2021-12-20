@@ -26,17 +26,31 @@ void PlayerContactListener::EndContact(b2Contact* contact)
 
 void PlayerContactListener::checkStartPlayer(b2Fixture* fixture)
 {
-	if (Player* player = getPlayerPointer(fixture); player && isFootSensor(fixture))
+	if (Player* player = getPlayerPointer(fixture))
 	{
-		player->startContact();
+		if (isFootSensor(fixture))
+		{
+			player->startFootContact();
+		}
+		else if (isHeadSensor(fixture))
+		{
+   			player->startHeadContact();
+		}
 	}
 }
 
 void PlayerContactListener::checkEndPlayer(b2Fixture* fixture)
 {
-	if (Player* player = getPlayerPointer(fixture); player && isFootSensor(fixture))
+	if (Player* player = getPlayerPointer(fixture))
 	{
-		player->endContact();
+		if (isFootSensor(fixture))
+		{
+			player->endFootContact();
+		}
+		else if (isHeadSensor(fixture))
+		{
+			player->endHeadContact();
+		}
 	}
 }
 
@@ -52,6 +66,13 @@ bool PlayerContactListener::isFootSensor(b2Fixture* fixture)
 {
 	const auto pointer = fixture->GetUserData().pointer;
 	constexpr auto sensorPtr = static_cast<uintptr_t>(FixtureType::PlayerFootSensor);
+	return pointer == sensorPtr;
+}
+
+bool PlayerContactListener::isHeadSensor(b2Fixture* fixture)
+{
+	const auto pointer = fixture->GetUserData().pointer;
+	constexpr auto sensorPtr = static_cast<uintptr_t>(FixtureType::PlayerHeadSensor);
 	return pointer == sensorPtr;
 }
 

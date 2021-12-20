@@ -6,8 +6,9 @@
 #include "Locator.h"
 
 Player::Player(b2World& world)
-	:Entity(world),
+	: Entity(world),
 	footContactsCounter_(0),
+	headContactsCounter_(0),
 	state_(PlayerState::Idle),
 	idle_(getSprite(), 0.6f),
 	walk_(getSprite(), 0.6f),
@@ -37,10 +38,20 @@ Player::Player(b2World& world)
 
 	b2FixtureDef footFixtureDef;
 	footFixtureDef.isSensor = true;
-	constexpr auto sensorPtr = static_cast<uintptr_t>(FixtureType::PlayerFootSensor);
-	footFixtureDef.userData.pointer = sensorPtr;
+	constexpr auto sensorFootPtr = static_cast<uintptr_t>(FixtureType::PlayerFootSensor);
+	footFixtureDef.userData.pointer = sensorFootPtr;
 	footFixtureDef.shape = &footPolygonShape;
 	getBody()->CreateFixture(&footFixtureDef);
+
+	b2PolygonShape headPolygonShape;
+	headPolygonShape.SetAsBox(0.99f, 0.01f, b2Vec2(0, 1), 0);
+
+	b2FixtureDef headFixtureDef;
+	headFixtureDef.isSensor = true;
+	constexpr auto sensorHeadPtr = static_cast<uintptr_t>(FixtureType::PlayerHeadSensor);
+	headFixtureDef.userData.pointer = sensorHeadPtr;
+	headFixtureDef.shape = &headPolygonShape;
+	getBody()->CreateFixture(&headFixtureDef);
 
 	for (int i = 0; i < 6; ++i)
 	{
@@ -84,7 +95,7 @@ b2Vec2 Player::computeMovementVec(const sf::Time deltaTime)
 	if (isInputingRight)
 		moveDirection = 1;
 
-	if (isGrounded())
+	if (isGrounded() || isTouchingHead())
 	{
 		moveVel_.y = 0;
 	}
@@ -115,6 +126,11 @@ b2Vec2 Player::computeMovementVec(const sf::Time deltaTime)
 bool Player::isGrounded() const
 {
 	return footContactsCounter_ > 0;
+}
+
+bool Player::isTouchingHead() const
+{
+	return headContactsCounter_ > 0;
 }
 
 void Player::update(const sf::Time deltaTime)
@@ -157,17 +173,28 @@ void Player::update(const sf::Time deltaTime)
 	if (body_->GetPosition().y < DEATH_HEIGHT)
 	{
 		gm->setState(GameState::Dead);
+		Locator::getAudio()->playSound(SoundType::Death);
 	}
 
 	Entity::update(deltaTime);
 }
 
-void Player::startContact()
+void Player::startFootContact()
 {
 	footContactsCounter_ += 1;
 }
 
-void Player::endContact()
+void Player::endFootContact()
 {
 	footContactsCounter_ -= 1;
+}
+
+void Player::startHeadContact()
+{
+	headContactsCounter_ += 1;
+}
+
+void Player::endHeadContact()
+{
+	headContactsCounter_ -= 1;
 }

@@ -17,12 +17,16 @@ public:
 	explicit Player(b2World& world);
 	PlayerState getState() const;
 	b2Vec2 computeMovementVec(const sf::Time deltaTime);
-	bool isGrounded() const;
 	void update(sf::Time deltaTime) override;
-	void startContact();
-	void endContact();
+	bool isGrounded() const;
+	bool isTouchingHead() const;
+	void startFootContact();
+	void endFootContact();
+	void startHeadContact();
+	void endHeadContact();
 private:
 	int32 footContactsCounter_;
+	int32 headContactsCounter_;
 	PlayerState state_;
 	FrameAnimation idle_;
 	FrameAnimation walk_;

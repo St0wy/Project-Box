@@ -98,6 +98,15 @@ void Game::startMainLoop()
 	looseText.setPosition(-5, -2);
 #pragma endregion
 
+	// Load music
+	sf::Music music;
+	music.setVolume(10);
+	music.setLoop(true);
+	if (music.openFromFile(MUSIC_PATH))
+	{
+		music.play();
+	}
+
 	// Main loop
 	sf::Clock clock;
 	while (window_.isOpen())

@@ -4,4 +4,5 @@ enum class FixtureType
 {
 	None,
 	PlayerFootSensor,
+	PlayerHeadSensor,
 };

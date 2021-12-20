@@ -5,11 +5,13 @@
 class SfmlAudio final : public AudioService
 {
 public:
-	static void init();
+	void init();
 	void playSound(SoundType soundType) override;
 	void stopAllSounds() override;
 	void stopSound(SoundType soundType) override;
 private:
-	static sf::SoundBuffer jumpBuffer_;
-	static sf::Sound jumpSound_;
+	sf::SoundBuffer jumpBuffer_;
+	sf::Sound jumpSound_;
+	sf::SoundBuffer deathBuffer_;
+	sf::Sound deathSound_;
 };
