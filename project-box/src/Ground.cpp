@@ -3,7 +3,7 @@
 #include "VecUtils.h"
 
 Ground::Ground(b2World& world, float groundHalfWidth, float groundHalfHeight, b2Vec2 position)
-	: body_(nullptr)
+	: Entity()
 {
 	// Create ground
 	b2BodyDef groundBodyDef;
@@ -18,16 +18,11 @@ Ground::Ground(b2World& world, float groundHalfWidth, float groundHalfHeight, b2
 	auto size = sf::Vector2f(groundHalfWidth * 2, groundHalfHeight * 2);
 	shape_.setSize(size);
 	shape_.setOrigin(size / 2.0f);
-	shape_.setPosition(Box2dVecToSfml(groundBody->GetWorldCenter()));
+	shape_.setPosition(box2dVecToSfml(groundBody->GetWorldCenter()));
 	shape_.setFillColor(sf::Color::Green);
 }
 
 void Ground::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(shape_);
-}
-
-b2Body* Ground::GetBody() const
-{
-	return body_;
 }
