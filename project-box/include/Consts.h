@@ -27,6 +27,7 @@ constexpr char FONT_PATH[] = "./data/fonts/upheaval.ttf";
 constexpr char MUSIC_PATH[] = "./data/music/spring_in_my_step.wav";
 constexpr char DEATH_SOUND_PATH[] = "./data/sounds/vine-boom.wav";
 constexpr char JUMP_SOUND_PATH[] = "./data/sounds/jump.wav";
+constexpr char BRAVO_SOUND_PATH[] = "./data/sounds/bravo.wav";
 
 const sf::Vector2u SPRITE_SIZE(16u, 16u);
 

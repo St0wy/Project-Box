@@ -36,6 +36,7 @@ void Game::startMainLoop()
 	Locator::init();
 	auto sfmlAudio = std::make_unique<SfmlAudio>();
 	sfmlAudio->init();
+	sfmlAudio->playMusic();
 	Locator::provide(sfmlAudio.get());
 
 	// Init texture locator
@@ -97,15 +98,6 @@ void Game::startMainLoop()
 	looseText.setOrigin(textRect.width / 2.0f, textRect.height / 2.0f);
 	looseText.setPosition(-5, -2);
 #pragma endregion
-
-	// Load music
-	sf::Music music;
-	music.setVolume(10);
-	music.setLoop(true);
-	if (music.openFromFile(MUSIC_PATH))
-	{
-		music.play();
-	}
 
 	// Main loop
 	sf::Clock clock;
@@ -188,6 +180,9 @@ void Game::startMainLoop()
 			(gm->getState() == GameState::Dead || gm->getState() == GameState::Winning))
 		{
 			clear();
+			const auto audio = Locator::getAudio();
+			audio->stopAllSounds();
+			audio->playMusic();
 			player = createEntities();
 		}
 
@@ -241,17 +236,19 @@ void Game::clear()
 
 Player* Game::createEntities()
 {
-	constexpr float groundHalfWidth = 50.0f;
 	constexpr float groundHalfHeight = 10.0f;
 
 	// Create ground
-	entities_.emplace_back(std::make_unique<Ground>(world_, groundHalfWidth, groundHalfHeight, b2Vec2(groundHalfWidth - 5, -15.0f)));
+	entities_.emplace_back(std::make_unique<Ground>(world_, 10.0f, groundHalfHeight, b2Vec2(10.0f - 5, -15.0f)));
+	entities_.emplace_back(std::make_unique<Ground>(world_, 10.0f, groundHalfHeight, b2Vec2(33.0f, -15.0f)));
+	entities_.emplace_back(std::make_unique<Ground>(world_, 10.0f, groundHalfHeight, b2Vec2(67.0f, -15.0f)));
+	entities_.emplace_back(std::make_unique<Ground>(world_, 10.0f, groundHalfHeight, b2Vec2(95.0f, -15.0f)));
 
 	// Create block
-	entities_.emplace_back(std::make_unique<Block>(world_, b2Vec2(5.0f, 0.0f)));
+	entities_.emplace_back(std::make_unique<Block>(world_, b2Vec2(50.0f, 0.0f)));
 
 	// Create finish line
-	entities_.emplace_back(std::make_unique<FinishLine>(world_, b2Vec2(15.0f, 0.0f)));
+	entities_.emplace_back(std::make_unique<FinishLine>(world_, b2Vec2(94.1f, 0.0f)));
 
 	// Create player, always do the player last
 	entities_.emplace_back(std::make_unique<Player>(world_));

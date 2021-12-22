@@ -13,8 +13,8 @@ void PlayerContactListener::BeginContact(b2Contact* contact)
 	const auto fixtureB = contact->GetFixtureB();
 	checkStartPlayer(fixtureA);
 	checkStartPlayer(fixtureB);
-	checkStartFlag(fixtureA);
-	checkStartFlag(fixtureB);
+	checkStartFinishLine(fixtureA);
+	checkStartFinishLine(fixtureB);
 }
 
 void PlayerContactListener::EndContact(b2Contact* contact)
@@ -34,7 +34,7 @@ void PlayerContactListener::checkStartPlayer(b2Fixture* fixture)
 		}
 		else if (isHeadSensor(fixture))
 		{
-   			player->startHeadContact();
+			player->startHeadContact();
 		}
 	}
 }
@@ -76,14 +76,16 @@ bool PlayerContactListener::isHeadSensor(b2Fixture* fixture)
 	return pointer == sensorPtr;
 }
 
-void PlayerContactListener::checkStartFlag(b2Fixture* fixture)
+void PlayerContactListener::checkStartFinishLine(b2Fixture* fixture)
 {
 	const std::uintptr_t bodyUserData = fixture->GetBody()->GetUserData().pointer;
 	// ReSharper disable once CppTooWideScopeInitStatement
 	const auto ptr = reinterpret_cast<Entity*>(bodyUserData);  // NOLINT(performance-no-int-to-ptr)
 	if (dynamic_cast<FinishLine*>(ptr))
 	{
-		GameManager* gm = Locator::getGameManager();
-		gm->setState(GameState::Winning);
+		Locator::getGameManager()->setState(GameState::Winning);
+		const auto audio = Locator::getAudio();
+		audio->pauseMusic();
+		audio->playSound(SoundType::Bravo);
 	}
 }

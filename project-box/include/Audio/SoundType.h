@@ -4,5 +4,6 @@ enum class SoundType
 {
 	None,
 	Jump,
-	Death
+	Death,
+	Bravo
 };

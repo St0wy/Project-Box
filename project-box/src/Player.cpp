@@ -38,8 +38,7 @@ Player::Player(b2World& world)
 
 	b2FixtureDef footFixtureDef;
 	footFixtureDef.isSensor = true;
-	constexpr auto sensorFootPtr = static_cast<uintptr_t>(FixtureType::PlayerFootSensor);
-	footFixtureDef.userData.pointer = sensorFootPtr;
+	footFixtureDef.userData.pointer = static_cast<std::uintptr_t>(FixtureType::PlayerFootSensor);
 	footFixtureDef.shape = &footPolygonShape;
 	getBody()->CreateFixture(&footFixtureDef);
 
@@ -48,8 +47,7 @@ Player::Player(b2World& world)
 
 	b2FixtureDef headFixtureDef;
 	headFixtureDef.isSensor = true;
-	constexpr auto sensorHeadPtr = static_cast<uintptr_t>(FixtureType::PlayerHeadSensor);
-	headFixtureDef.userData.pointer = sensorHeadPtr;
+	headFixtureDef.userData.pointer = static_cast<uintptr_t>(FixtureType::PlayerHeadSensor);
 	headFixtureDef.shape = &headPolygonShape;
 	getBody()->CreateFixture(&headFixtureDef);
 
