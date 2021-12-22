@@ -19,11 +19,6 @@ b2Body* Entity::getBody() const
 	return body_;
 }
 
-void Entity::setBody(b2Body* body)
-{
-	body_ = body;
-}
-
 void Entity::update(const sf::Time deltaTime)
 {
 	setPosition(box2dVecToSfml(body_->GetPosition()));

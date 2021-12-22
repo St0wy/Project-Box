@@ -2,6 +2,9 @@
 #include "Audio/AudioService.h"
 #include "Audio/SoundType.h"
 
+/**
+ * \brief An empty implementation of the audio service.
+ */
 class NullAudio final : public AudioService
 {
 public:

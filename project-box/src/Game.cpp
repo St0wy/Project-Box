@@ -194,11 +194,11 @@ void Game::drawColliders()
 {
 	for (const auto& entity : entities_)
 	{
-		drawBody(entity->getBody());
+		drawBodyColliders(entity->getBody());
 	}
 }
 
-void Game::drawBody(b2Body* body)
+void Game::drawBodyColliders(b2Body* body)
 {
 	b2Fixture* fixture = body->GetFixtureList();
 	while (fixture != nullptr)

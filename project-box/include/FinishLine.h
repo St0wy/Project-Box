@@ -3,6 +3,9 @@
 #include <box2d/box2d.h>
 #include "Entity.h"
 
+/**
+ * \brief The finish line of the level.
+ */
 class FinishLine final : public Entity
 {
 public:

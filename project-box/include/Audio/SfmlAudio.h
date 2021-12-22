@@ -2,9 +2,15 @@
 #include "AudioService.h"
 #include <SFML/Audio.hpp>
 
+/**
+ * \brief An SFML implementation of the audio service.
+ */
 class SfmlAudio final : public AudioService
 {
 public:
+	/**
+	 * \brief Loads all the sounds into memory.
+	 */
 	void init();
 	void playSound(SoundType soundType) override;
 	void stopAllSounds() override;

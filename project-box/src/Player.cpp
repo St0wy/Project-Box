@@ -30,7 +30,7 @@ Player::Player(b2World& world)
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;
 
-	setBody(world.CreateBody(&entityBodyDef));
+	body_ = world.CreateBody(&entityBodyDef);
 	getBody()->CreateFixture(&fixtureDef);
 
 	b2PolygonShape footPolygonShape;

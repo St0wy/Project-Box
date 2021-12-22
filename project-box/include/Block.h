@@ -1,6 +1,9 @@
 #pragma once
 #include "Entity.h"
 
+/**
+ * \brief Represents a block in the world.
+ */
 class Block final : public Entity
 {
 public:
